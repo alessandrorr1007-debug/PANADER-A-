@@ -15,9 +15,9 @@ Sirve la raíz del repositorio con `python -m http.server 8000` y abre http://lo
 
 ## Flujo de usuario
 
-Registrar correo y contraseña (mínimo 12 caracteres en interfaz), confirmar el código y después iniciar sesión. El segundo factor es opcional en cuentas normales y obligatorio para administradores de plataforma o usuarios con un factor verificado. La recuperación solicita un código de correo, el segundo factor si corresponde y la nueva contraseña; intenta cerrar todas las sesiones. No compartir secretos.
+Registrar correo y contraseña (mínimo 6 caracteres en interfaz y configuración de Auth), confirmar el código y después iniciar sesión. El segundo factor es opcional en cuentas normales y obligatorio para administradores de plataforma o usuarios con un factor verificado. La recuperación solicita un código de correo, el segundo factor si corresponde y la nueva contraseña; intenta cerrar todas las sesiones. No compartir secretos.
 
-El alta inicial crea negocio, membresía de propietario y primera sucursal de forma atómica; otorga 14 días de prueba solo a un correo verificado e identidad elegibles. Los trabajadores invitados aceptan en Mi negocio usando su propio correo. No existe alta automática de superadministrador.
+El alta inicial crea negocio, membresía de propietario y primera sucursal de forma atómica; otorga 14 días de prueba solo a un correo verificado e identidad elegibles. Los trabajadores invitados aceptan en Mi negocio usando su propio correo. No existe registro público ni alta automática de superadministrador: su cuenta se aprovisiona de forma privada desde el Dashboard de Supabase Auth y se autoriza mediante su UUID verificado.
 
 La sesión está en memoria y no se persiste en el dispositivo. Una nueva sesión operativa sustituye la anterior. Recargar la página o expirar la sesión puede requerir autenticarse nuevamente.
 

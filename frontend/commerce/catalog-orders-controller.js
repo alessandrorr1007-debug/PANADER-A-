@@ -1,8 +1,8 @@
 'use strict';
 const orderStates={pending:'Pendiente',confirmed:'Confirmado',ready:'Listo',delivered:'Entregado',cancelled:'Cancelado'};
-function orderDraft(lines,products){
+function orderDraft(lines,products,scale=typeof module!=='undefined'?require('./commerce-controller.js').scaled:scaled){
  if(!lines.length||lines.length>100)throw Error('Añade productos al pedido.');const seen=new Set();let cents=0n;
- const items=lines.map(l=>{const p=products.find(x=>x.recipe_id===l.recipe&&x.active&&x.unit_price!=null);if(!p||seen.has(l.recipe)||!/^\d+$/.test(String(l.units))||Number(l.units)<1||Number(l.units)>1000000)throw Error('Producto repetido o cantidad inválida.');seen.add(l.recipe);const units=Number(l.units);cents+=BigInt(units)*scaled(p.unit_price,2,999999999999n);return {recipe_id:l.recipe,units};});return {items,cents};
+ const items=lines.map(l=>{const p=products.find(x=>x.recipe_id===l.recipe&&x.active&&x.unit_price!=null);if(!p||seen.has(l.recipe)||!/^\d+$/.test(String(l.units))||Number(l.units)<1||Number(l.units)>1000000)throw Error('Producto repetido o cantidad inválida.');seen.add(l.recipe);const units=Number(l.units);cents+=BigInt(units)*scale(p.unit_price,2,999999999999n);return {recipe_id:l.recipe,units};});return {items,cents};
 }
 function createCatalogOrdersController({api,run,reload}){
  const $=id=>document.getElementById(id),tracker=requestTracker(()=>crypto.randomUUID());let scope=null,products=[],customers=[],orders=[],access={};
@@ -29,4 +29,4 @@ function createCatalogOrdersController({api,run,reload}){
  $('order-form').addEventListener('submit',e=>{e.preventDefault();run(async()=>{if(!scope||!access.active||!access.has('sales'))return;let d;try{d=lineDraft();}catch(e){text('order-status',e.message);return;}const customer=$('order-customer').value,due=$('order-due').value,notes=$('order-notes').value.trim()||null,payload=['order',scope.bakery,scope.branch,customer,due,notes,d.items];if(!customer||!due||due<inventoryDay())return;await submitAction(async()=>{await api.createOrder(scope.bakery,scope.branch,customer,tracker.id(payload),due,notes,d.items);tracker.complete(payload);$('order-form').reset();},'order-status','Pedido registrado sin reservar stock.');});});
  return {refresh,clear};
 }
-if(typeof module!=='undefined'){const {scaled}=require('./commerce-controller.js');module.exports={orderDraft};}
+if(typeof module!=='undefined')module.exports={orderDraft};

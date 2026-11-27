@@ -6,7 +6,7 @@
 ![Estado](https://img.shields.io/badge/estado-en_desarrollo-8B451F)
 ![Interfaz](https://img.shields.io/badge/tema-claro-C58B43)
 
-> **Estado actual:** aplicación en desarrollo con base de datos dedicada en Supabase y módulos operativos implementados. Todavía no hay una URL pública de producción, ni un superadministrador activado. El envío de correos de confirmación y recuperación requiere configuración y validación real. No introducir datos de clientes reales hasta superar las pruebas de aceptación.
+> **Estado actual:** aplicación en desarrollo con base de datos dedicada en Supabase y módulos operativos implementados. El propietario ha publicado el portal en [Netlify](https://panader-a.netlify.app); la cuenta privada de superadministración está pendiente de nuevo aprovisionamiento. El envío de correos de confirmación y recuperación requiere configuración y validación real. No introducir datos de clientes reales hasta superar las pruebas de aceptación.
 
 ## Contenido
 
@@ -39,7 +39,7 @@ Para probarlo en una computadora, consulta las instrucciones del apartado 10. Ab
 ### Crear tu cuenta
 
 1. Abre el portal del negocio y selecciona **Crear cuenta**.
-2. Escribe tu correo y una contraseña de al menos 12 caracteres.
+2. Escribe tu correo y una contraseña de al menos 6 caracteres.
 3. Introduce el código de confirmación de seis dígitos recibido por correo.
 4. Inicia sesión. Si tienes un segundo factor configurado, introduce el código de tu autenticador.
 5. Si eres propietario y todavía no perteneces a un negocio, escribe el nombre de tu panadería y de tu primera sucursal.
@@ -195,7 +195,7 @@ No existe cobro automático, pasarela de pagos ni validación bancaria automáti
 
 ## 7. Seguridad de tu cuenta
 
-- Confirma tu correo y usa una contraseña exclusiva de al menos 12 caracteres.
+- Confirma tu correo y usa una contraseña exclusiva de al menos 6 caracteres.
 - Activa el segundo factor (TOTP) con una aplicación autenticadora compatible. El portal ofrece configuración manual de la clave y solicita el código temporal. Para superadministradores es obligatorio; una cuenta que ya lo activó también debe verificarlo.
 - **Recuperar contraseña:** solicita un código desde «¿Olvidaste tu contraseña?», verifica el correo y el segundo factor si corresponde, establece una nueva contraseña y vuelve a iniciar sesión.
 - Si pierdes el autenticador, necesitarás asistencia de un operador autorizado. No existe un flujo automático de recuperación de segundo factor ni códigos de respaldo.
@@ -220,7 +220,7 @@ Los datos se almacenan en PostgreSQL con políticas de seguridad por fila (RLS),
 
 ## 9. Administración de la plataforma
 
-El panel separado de superadministración permite revisar clientes, planes, estados, vigencias, cupos y solicitudes de pago. También permite configurar precios, instrucciones de pago, aprobar o rechazar solicitudes y gestionar el estado de las suscripciones. El permiso se asigna en el servidor a una identidad verificada y requiere segundo factor. No hay credenciales administrativas públicas ni una cuenta real aprovisionada todavía.
+El panel separado de superadministración permite revisar clientes, planes, estados, vigencias, cupos y solicitudes de pago. También permite configurar precios, instrucciones de pago, aprobar o rechazar solicitudes y gestionar el estado de las suscripciones. No existe registro público de superadministrador. El propietario aprovisiona la identidad de forma privada desde Supabase Auth, verifica su correo y asigna el UUID en el servidor. Se exige segundo factor. No hay credenciales administrativas públicas ni una cuenta real aprovisionada todavía.
 
 ## 10. Instalación, pruebas y desarrollo
 
@@ -248,7 +248,7 @@ HTML, CSS y JavaScript modular en frontend; Supabase Auth y Data API; PostgreSQL
 
 ### Estado técnico verificado
 
-Al 27 de noviembre de 2026, la instancia dedicada tiene 12 migraciones instaladas y 32 tablas con RLS habilitado. Las pruebas de unidades, costos, lotes, vencimientos, FEFO y mermas pasaron en CI; el escenario de lotes se verificó además en PostgreSQL real mediante transacciones de prueba revertidas. Los resultados de la [última verificación funcional](https://github.com/alessandrorr1007-debug/PANADER-A-/actions/runs/46029076195) están disponibles en GitHub.
+Al 27 de noviembre de 2026, la instancia dedicada tiene 16 migraciones instaladas y 40 tablas con RLS habilitado. Las pruebas de unidades, costos, lotes, vencimientos, FEFO y mermas pasaron en CI; el escenario de lotes se verificó además en PostgreSQL real mediante transacciones de prueba revertidas. Los resultados de la [última verificación funcional](https://github.com/alessandrorr1007-debug/PANADER-A-/actions/runs/46029076195) están disponibles en GitHub.
 
 Pendiente de validar: registro por correo y recuperación reales, MFA desde navegador, configuración de SMTP, cuenta de superadministración, pruebas E2E, revisión visual, backups y publicación. No instalar los mocks de Auth ni los datos ficticios en Supabase real.
 

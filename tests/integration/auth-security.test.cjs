@@ -10,3 +10,6 @@ await api.verifyTotp('factor','123456');assert.deepEqual(JSON.parse(calls.at(-1)
 await api.updatePassword('test-long-password');assert.equal(calls.at(-1).opts.method,'PUT');await api.logoutAll();assert.equal(api.hasSession(),false);
 console.log('Auth email, recovery, TOTP and logout API contracts passed');
 })().catch(e=>{console.error(e);process.exitCode=1});
+
+// The public signup is ordinary identity registration; admin portal is login-only.
+{const fs=require('node:fs'),path=require('node:path');const root=path.resolve(__dirname,'../..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');const admin=read('admin.html'),flow=read('frontend/auth/auth-flow.js'),access=read('frontend/auth/access-controller.js');require('node:assert/strict').doesNotMatch(admin,/signup-tab|Registrarme|Para crear una cuenta usa/);require('node:assert/strict').match(flow,/if\(admin&&!requirements\.platform_admin\)/);require('node:assert/strict').match(flow,/minLength:6/);require('node:assert/strict').match(access,/next==='signup'\?6:1/);}
