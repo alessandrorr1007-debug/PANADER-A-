@@ -1,0 +1,24 @@
+const assert=require('node:assert/strict');const {milliUnits,previewProduction,validateRecipeDraft}=require('../production.js');const {createApi}=require('../access.js');
+(async()=>{
+ assert.equal(milliUnits('0.001'),1n);assert.equal(milliUnits('1.2'),1200n);
+ for(const v of ['-1','1e2','NaN','0.0001'])assert.throws(()=>milliUnits(v));
+ const r={yield_units:3},items=[{ingredient_id:'i',quantity:'1'}],ing=[{id:'i',name:'Harina',unit:'kg',active:true,reference_cost:4}];
+ const p=previewProduction(r,items,ing,[{ingredient_id:'i',quantity:'0.334'}],1);assert.equal(p.lines[0].quantity,0.334);assert.equal(p.ready,true);assert.equal(p.total,1.336);
+ assert.equal(previewProduction(r,items,ing,[{ingredient_id:'i',quantity:'0.333'}],1).ready,false);
+ assert.equal(previewProduction(r,items,[{...ing[0],active:false}],[{ingredient_id:'i',quantity:'10'}],1).ready,false);
+ assert.equal(previewProduction(r,items,[],[],1).ready,false);assert.equal(previewProduction(r,[],ing,[],1).ready,false);
+ assert.throws(()=>previewProduction(r,items,ing,[],1.5));
+ assert.deepEqual(validateRecipeDraft(' Pan ',100,[{ingredient_id:'i',quantity:'1.250'}]),{name:'Pan',units:100,items:[{ingredient_id:'i',quantity:1.25}]});
+ for(const n of ['0','1.5','1000001',''])assert.throws(()=>validateRecipeDraft('Pan',n,[{ingredient_id:'i',quantity:'1'}]));
+ assert.throws(()=>validateRecipeDraft('Pan',100,[{ingredient_id:'i',quantity:'1'},{ingredient_id:'i',quantity:'2'}]));
+ assert.throws(()=>validateRecipeDraft('Pan',100,[{ingredient_id:'i',quantity:'0'}]));
+ const calls=[];const api=createApi({url:'https://example.supabase.co',key:'sb_publishable_test'},async(url,opts)=>{calls.push({url,opts});return {ok:true,status:200,json:async()=>url.includes('grant_type')?{access_token:'test'}:[]};});
+ await assert.rejects(api.recipes('a'));await api.login('a@example.test','pass');
+ await api.recipes('a&x=1','c');assert.ok(calls.at(-1).url.includes('bakery_id=eq.a%26x%3D1'));assert.ok(calls.at(-1).url.includes('id=gt.c'));
+ await api.recipeItems('a','r&x=1','i');assert.ok(calls.at(-1).url.includes('recipe_id=eq.r%26x%3D1'));assert.ok(calls.at(-1).url.includes('ingredient_id=gt.i'));
+ await api.batches('a','b');assert.ok(calls.at(-1).url.includes('branch_id=eq.b'));assert.ok(calls.at(-1).url.includes('limit=30'));
+ await api.createRecipe('a','Pan',100,[{ingredient_id:'i',quantity:1}]);assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{p_bakery:'a',p_name:'Pan',p_yield:100,p_items:[{ingredient_id:'i',quantity:1}]});
+ await api.completeBatch('a','b','r','req',10);assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{p_bakery:'a',p_branch:'b',p_recipe:'r',p_request:'req',p_units:10});
+ assert.ok(calls.slice(1).every(c=>c.opts.headers.Authorization==='Bearer test'));
+ console.log('Production integration: precision, preview, recipe validation and HTTP contracts passed');
+})().catch(e=>{console.error(e);process.exitCode=1});

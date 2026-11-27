@@ -75,3 +75,7 @@ Borrador SQL de planes provisionales, prueba, vigencia, límites, acceso de cons
 ## Fase 7.1 — Integración de almacén e insumos
 
 El portal autenticado consume las consultas y RPC de inventario; incluye registro de insumos, mínimos, movimientos y consultas por sucursal. Sin credenciales configuradas no realiza llamadas. Ver [integración](docs/inventory-integration.md). Pruebas HTTP simuladas en CI; falta conexión y validación E2E.
+
+## Fase 7.2 — Integración de recetas y producción
+
+Portal autenticado con catálogo versionado, editor de ingredientes, cálculo previo de cantidades y costo, confirmación de producción e historial. Ver [integración de producción](docs/production-integration.md). Sin conexión real configurada; pruebas en CI.

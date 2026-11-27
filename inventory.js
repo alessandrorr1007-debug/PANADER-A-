@@ -25,7 +25,7 @@ function requestTracker(makeId){
  return {id(payload){const key=JSON.stringify(payload);if(!pending.has(key))pending.set(key,makeId());return pending.get(key);},
  complete(payload){pending.delete(JSON.stringify(payload));},clear(){pending.clear();}};
 }
-function createInventoryController({api,run}){
+function createInventoryController({api,run,onChange=async()=>{}}){
  const $=id=>document.getElementById(id);let scope=null,rows=[],permissions={};
  const retry=requestTracker(()=>crypto.randomUUID());
  const money=n=>Number(n).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:4});
@@ -54,7 +54,7 @@ function createInventoryController({api,run}){
  async function open(next){scope=next;$('inventory').hidden=false;$('inventory-scope').textContent=next.label;await refresh();}
  async function execute(action,success){
  try{await action();}catch(e){message('Operación no confirmada. Revisa existencias, permisos y suscripción. Si fue un movimiento, reintenta con los mismos datos en esta sesión.');if(!api.hasSession())throw e;return;}
- await refresh();if(!$('inventory-content').hidden)message(success);
+ await refresh();if(!$('inventory-content').hidden)message(success);await onChange();
  }
  $('inv-search').addEventListener('input',table);
  $('inventory-reload').addEventListener('click',()=>run(refresh));
@@ -63,6 +63,6 @@ function createInventoryController({api,run}){
  const payload=[scope.bakery,scope.branch,item,dir,qty,reason];
  await execute(async()=>{const req=retry.id(payload);await api.movement(scope.bakery,scope.branch,item,req,dir,qty,reason);retry.complete(payload);$('mov-qty').value='';$('mov-reason').value='';},'Movimiento confirmado.');});});
  $('minimum-form').addEventListener('submit',e=>{e.preventDefault();run(async()=>{if(!scope||!permissions.manager)return;let qty;try{qty=decimal($('min-qty').value,3,99999999999,true);}catch{message('Mínimo inválido.');return;}const item=$('min-item').value;if(!item)return;await execute(async()=>{await api.minimum(scope.bakery,scope.branch,item,qty);$('min-qty').value='';},'Mínimo actualizado.');});});
- return {open,clear};
+ return {open,clear,refresh};
 }
 if(typeof module!=='undefined')module.exports={collectPages,inventoryRows,inventoryPermissions,decimal,requestTracker};
