@@ -20,3 +20,11 @@ const results = new Function("const location={hash:''};"+script.split("$('nav').
 ]`)();
 for (const [name, passed] of results) { assert.ok(passed,name); console.log('OK '+name); }
 console.log(results.length+'/'+results.length+' comprobaciones aprobadas');
+
+// Regresión visual de configuración: solo tema claro.
+assert.match(html, /color-scheme:light/);
+assert.doesNotMatch(html, /data-theme|prefers-color-scheme|panaderia-theme|id="theme"|applyTheme\(/);
+assert.match(html, /--brand:#8B451F/);
+assert.match(html, /--bg:#FAF6EF/);
+assert.match(html, /--accent:#C58B43/);
+console.log('5/5 comprobaciones de configuración de paleta aprobadas');
