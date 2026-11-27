@@ -1,0 +1,6 @@
+# Fase 7.4 — Caja y reportes autenticados
+- Corrección del validador de unidades enteras de venta: la expresión regular literal tenía un escape adicional. Pruebas de comercio existentes cubren la regresión.
+- Caja: saldo de apertura, ventas efectivo/digitales, entradas/salidas manuales, efectivo esperado, turnos y arqueo histórico (30 turnos y 30 movimientos por turno). Apertura/cierre se mantienen en comercial. Los administradores registran efectivo con UUID de reintento en memoria. No se duplican pagos de compras de forma automática. Cierre de caja sigue permitido por backend al vencer la suscripción.
+- Reportes 7, 30 o 90 días calendario, incluyendo hoy en America/Lima, por sucursal. Días sin operaciones aparecen en cero. Gráfico de ventas y tabla accesible; sumas de importes con enteros escalados. Los valores recibidos por JSON pueden perder precisión para cifras extremas; servidor mantiene precisión decimal.
+- Se refrescan reportes al confirmar operaciones comerciales y caja comercial al registrar un movimiento. No se calculan utilidad neta ni tributos. El margen solo resta costo referencial de insumos vendidos.
+- Pruebas Node de fechas, montos y contratos HTTP; no son pruebas E2E. Sin instancia real configurada. Pendientes: interfaz SaaS, pruebas navegador, concurrencia y validación Supabase. No hay exportación, facturación ni contabilidad.

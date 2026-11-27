@@ -17,12 +17,12 @@ function saleDraft(lines,finished){
  if(!lines.length||lines.length>100)throw Error('Añade entre 1 y 100 lotes.');
  const ids=new Set();let cents=0n;
  const items=lines.map(l=>{const p=finished.find(x=>x.batch_id===l.id);if(!p||ids.has(l.id)||p.price==null)throw Error('Selecciona lotes distintos con precio configurado.');ids.add(l.id);
- if(!/^\\d+$/.test(String(l.quantity)))throw Error('Las unidades deben ser enteras.');
+ if(!/^\d+$/.test(String(l.quantity)))throw Error('Las unidades deben ser enteras.');
  const u=Number(l.quantity);if(!Number.isSafeInteger(u)||u<1||u>1000000||u>Number(p.available_units))throw Error('Unidades inválidas o stock insuficiente.');
  const price=scaled(p.price,2,999999999999n);cents+=BigInt(u)*price;return {batch_id:l.id,units:u,unit_price:Number(price)/100};});
  return {items,cents};
 }
-function createCommerceController({api,run,onPurchase=async()=>{}}){
+function createCommerceController({api,run,onPurchase=async()=>{},onChange=async()=>{}}){
  const $=id=>document.getElementById(id),tracker=requestTracker(()=>crypto.randomUUID());let scope=null,loaded=false,permissions={},suppliers=[],ingredients=[],recipes=[],finished=[],shift=null;
  const msg=t=>{$('commerce-message').textContent=t;};
  const money=n=>'S/ '+Number(n).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -64,7 +64,7 @@ function createCommerceController({api,run,onPurchase=async()=>{}}){
  loaded=true;$('commerce-content').hidden=false;msg(!permissions.active?'Suscripción inactiva: solo consulta y cierre de caja por administrador.':'');
  }catch(e){loaded=false;msg('No se pudo cargar el módulo comercial. Actualiza para volver a consultar.');if(!api.hasSession())throw e;}}
  async function open(next){scope=next;$('commerce-area').hidden=false;$('commerce-scope').textContent=next.label;await refresh();}
- async function execute(action,success,after){try{await action();}catch(e){msg('Operación no confirmada. Comprueba el historial; conserva los mismos datos si reintentas en esta sesión.');if(!api.hasSession())throw e;return;}await refresh();if(loaded)msg(success);if(after)await after();}
+ async function execute(action,success,after){try{await action();}catch(e){msg('Operación no confirmada. Comprueba el historial; conserva los mismos datos si reintentas en esta sesión.');if(!api.hasSession())throw e;return;}await refresh();if(loaded)msg(success);if(after)await after();await onChange();}
  function submit(id,fn){$(id).addEventListener('submit',e=>{e.preventDefault();run(async()=>{if(!scope||!loaded)return;try{await fn();}catch(e){if(!api.hasSession())throw e;msg(e.message||'Operación inválida.');}});});}
  $('commerce-reload').addEventListener('click',()=>run(refresh));$('purchase-add').addEventListener('click',()=>addLine('purchase'));$('sale-add').addEventListener('click',()=>addLine('sale'));$('purchase-supplier').addEventListener('change',()=>preview('purchase'));$('sale-payment').addEventListener('change',()=>preview('sale'));
  submit('supplier-form',async()=>{if(!permissions.manager)return;const name=$('supplier-name').value.trim();if(!name)throw Error('Escribe el proveedor.');await execute(()=>api.addSupplier(scope.bakery,name),'Proveedor registrado.');});

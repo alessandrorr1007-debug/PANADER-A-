@@ -83,3 +83,7 @@ Portal autenticado con catálogo versionado, editor de ingredientes, cálculo pr
 ## Fase 7.3 — Integración comercial
 
 Portal autenticado con proveedores, compras, existencias terminadas, precios, apertura/cierre básico de caja y ventas multilínea. Ver [integración comercial](docs/commerce-integration.md). No conectado a una instancia real; pruebas CI.
+
+## Fase 7.4 — Caja y reportes
+
+Portal autenticado con movimientos de efectivo, historial de arqueos, indicadores y ventas diarias (7/30/90 días). Se corrigió el validador de unidades de venta. Ver [finanzas](docs/finance-integration.md). CI pendiente; no conectado a una instancia real.
