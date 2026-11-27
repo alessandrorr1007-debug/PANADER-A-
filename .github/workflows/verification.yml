@@ -38,4 +38,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y postgresql-client
-      - run: psql -X -v ON_ERROR_STOP=1 -f tests/database/mock-auth.sql -f database/tenant-foundation.sql -f tests/database/tenant-isolation.sql -f database/onboarding.sql -f tests/database/onboarding.sql -f database/inventory.sql -f tests/database/inventory.sql -f database/production.sql -f tests/database/production.sql -f database/commerce.sql -f tests/database/commerce.sql -f database/finance.sql -f tests/database/finance.sql
+      - run: psql -X -v ON_ERROR_STOP=1 -f tests/database/mock-auth.sql -f database/tenant-foundation.sql -f tests/database/tenant-isolation.sql -f database/onboarding.sql -f tests/database/onboarding.sql -f database/inventory.sql -f tests/database/inventory.sql -f database/production.sql -f tests/database/production.sql -f database/commerce.sql -f tests/database/commerce.sql -f database/finance.sql -f tests/database/finance.sql -f database/subscriptions.sql -f tests/database/subscriptions.sql

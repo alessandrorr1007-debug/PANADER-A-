@@ -67,3 +67,7 @@ Borrador SQL de proveedores, recepciones, reposición de materias primas, invent
 ## Fase 5.2 — Caja, precios y reportes
 
 Borrador SQL de turnos, ingresos/egresos, arqueo, precios por versión y reportes diarios. Las nuevas ventas requieren caja abierta y precio configurado. Ver [finanzas](docs/finance.md). CI incorpora pruebas de permisos, totales, diferencias y reintentos; pendiente conexión real.
+
+## Fase 6 — Modelo comercial SaaS
+
+Borrador SQL de planes provisionales, prueba, vigencia, límites, acceso de consulta tras vencimiento y administración de clientes auditada. Sin cobros ni precios definidos. Ver [suscripciones](docs/subscriptions.md). Pendiente interfaz y validación real.
