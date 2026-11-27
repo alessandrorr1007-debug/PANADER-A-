@@ -16,6 +16,7 @@ jobs:
       - run: node tests/access.test.cjs
       - run: node tests/inventory.test.cjs
       - run: node tests/production.test.cjs
+      - run: node tests/commerce.test.cjs
   database:
     runs-on: ubuntu-latest
     services:

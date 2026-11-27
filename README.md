@@ -79,3 +79,7 @@ El portal autenticado consume las consultas y RPC de inventario; incluye registr
 ## Fase 7.2 — Integración de recetas y producción
 
 Portal autenticado con catálogo versionado, editor de ingredientes, cálculo previo de cantidades y costo, confirmación de producción e historial. Ver [integración de producción](docs/production-integration.md). Sin conexión real configurada; pruebas en CI.
+
+## Fase 7.3 — Integración comercial
+
+Portal autenticado con proveedores, compras, existencias terminadas, precios, apertura/cierre básico de caja y ventas multilínea. Ver [integración comercial](docs/commerce-integration.md). No conectado a una instancia real; pruebas CI.

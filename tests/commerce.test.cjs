@@ -1,0 +1,25 @@
+const assert=require('node:assert/strict');const {scaled,centsText,purchaseDraft,saleDraft}=require('../commerce.js');const {createApi}=require('../access.js');
+(async()=>{
+ assert.equal(scaled('0.001',3,1000n),1n);assert.equal(centsText(123n),'1.23');assert.equal(centsText(-1n),'-0.01');
+ const ingredients=[{id:'i',active:true},{id:'j',active:false}];
+ const lines=[{id:'i',quantity:'1.125',cost:'2.3456'}];let p=purchaseDraft(lines,ingredients);assert.equal(p.cents,264n);assert.deepEqual(p.items,[{ingredient_id:'i',quantity:1.125,unit_cost:2.3456}]);
+ assert.equal(purchaseDraft([{id:'i',quantity:'1',cost:'0.005'}],ingredients).cents,1n);
+ for(const l of [[],[...lines,...lines],[{id:'j',quantity:'1',cost:'1'}],[{id:'i',quantity:'0',cost:'1'}]])assert.throws(()=>purchaseDraft(l,ingredients));
+ const finished=[{batch_id:'a',available_units:10,price:'0.30'},{batch_id:'b',available_units:5,price:null}];const s=saleDraft([{id:'a',quantity:'3'}],finished);assert.equal(s.cents,90n);assert.deepEqual(s.items,[{batch_id:'a',units:3,unit_price:0.3}]);
+ for(const l of [[{id:'a',quantity:'11'}],[{id:'a',quantity:'1.5'}],[{id:'b',quantity:'1'}],[{id:'a',quantity:'1'},{id:'a',quantity:'1'}]])assert.throws(()=>saleDraft(l,finished));
+ const calls=[];const api=createApi({url:'https://example.supabase.co',key:'sb_publishable_test'},async(url,opts)=>{calls.push({url,opts});return {ok:true,status:opts.headers.Prefer?201:200,json:async()=>url.includes('grant_type')?{access_token:'test'}:[]};});
+ await assert.rejects(api.finished('a','b'));await api.login('test@example.test','pass');
+ await api.finished('a&x=1','b&x=2','c');assert.ok(calls.at(-1).url.includes('bakery_id=eq.a%26x%3D1&branch_id=eq.b%26x%3D2'));assert.ok(calls.at(-1).url.includes('batch_id=gt.c'));
+ await api.suppliers('a');assert.ok(calls.at(-1).url.includes('/suppliers?'));
+ await api.prices('a','r');assert.ok(calls.at(-1).url.includes('recipe_id=gt.r'));
+ await api.cashOpen('a','b');assert.ok(calls.at(-1).url.includes('closed_at=is.null'));
+ await api.purchases('a','b');assert.ok(calls.at(-1).url.includes('limit=30'));await api.sales('a','b');assert.ok(calls.at(-1).url.includes('/sales?'));
+ await api.addSupplier('a','Proveedor');assert.equal(calls.at(-1).opts.headers.Prefer,'return=minimal');
+ await api.setPrice('a','r',0.3);assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{p_bakery:'a',p_recipe:'r',p_price:0.3});
+ await api.openCash('a','b','q',100);assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{p_bakery:'a',p_branch:'b',p_request:'q',p_opening:100});
+ await api.closeCash('a','b','shift',100);assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{p_bakery:'a',p_branch:'b',p_shift:'shift',p_counted:100});
+ await api.receivePurchase('a','b','s','q',p.items);assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{p_bakery:'a',p_branch:'b',p_supplier:'s',p_request:'q',p_items:p.items});
+ await api.recordSale('a','b','q','cash',s.items);assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{p_bakery:'a',p_branch:'b',p_request:'q',p_payment:'cash',p_items:s.items});
+ assert.ok(calls.slice(1).every(c=>c.opts.headers.Authorization==='Bearer test'));
+ console.log('Commerce integration: exact totals, stock, price and API contracts passed');
+})().catch(e=>{console.error(e);process.exitCode=1});
