@@ -43,3 +43,7 @@ Tema claro obligatorio. Fondo crema `#FAF6EF`, superficies blancas `#FFFFFF`, te
 ## Refinamiento visual — dashboard y módulos
 
 Tema exclusivamente claro y paleta de panadería conservada. Se rediseñaron navegación, cabecera, tarjetas KPI, acciones rápidas, gráfica con escala, alertas con barras de nivel, tablas, resúmenes de almacén/insumos/recetas/producción y estado vacío de compras. Ventas y reportes reutilizan la gráfica de ejemplo. No se añadieron operaciones reales ni dependencias externas. Se verificaron 32 comprobaciones de lógica, configuración y componentes generados mediante ejecución JavaScript; falta prueba visual y funcional en navegador real.
+
+## Fase 3 — Fundación multiempresa
+
+Se incorpora un borrador PostgreSQL con empresas, membresías, roles, sucursales y RLS, además de pruebas de aislamiento y un flujo de CI. El frontend sigue en demostración; sin despliegue ni conexión a Supabase. Ver [arquitectura](docs/tenant-architecture.md). Las pruebas de PostgreSQL quedan pendientes de ejecución en CI.
