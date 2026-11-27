@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');const {createApi}=require('../../frontend/shared/api-client.js');
+(async()=>{const calls=[];const api=createApi({url:'https://example.supabase.co',key:'sb_publishable_test'},async(url,opts)=>{calls.push({url,opts});const data=url.endsWith('/challenge')?{id:'challenge'}:url.endsWith('/verify')||url.includes('grant_type')?{access_token:'new-token',user:{id:'u'}}:url.endsWith('/factors')?{id:'factor',totp:{secret:'TEST'}}:{};return {ok:true,status:200,json:async()=>data};});
+await api.resendConfirmation('a@example.test');assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{type:'signup',email:'a@example.test'});
+await api.recover('a@example.test');assert.ok(calls.at(-1).url.endsWith('/recover'));
+await assert.rejects(api.verifyEmail('a@example.test','bad','recovery'));
+await api.verifyEmail('a@example.test','123456','recovery');assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{email:'a@example.test',token:'123456',type:'recovery'});
+await api.authRequirements();assert.equal(calls.at(-1).opts.headers.Authorization,'Bearer new-token');
+await api.enrollTotp();assert.equal(JSON.parse(calls.at(-1).opts.body).factor_type,'totp');
+await api.verifyTotp('factor','123456');assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{challenge_id:'challenge',code:'123456'});
+await api.updatePassword('test-long-password');assert.equal(calls.at(-1).opts.method,'PUT');await api.logoutAll();assert.equal(api.hasSession(),false);
+console.log('Auth email, recovery, TOTP and logout API contracts passed');
+})().catch(e=>{console.error(e);process.exitCode=1});

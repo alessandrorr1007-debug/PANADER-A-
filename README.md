@@ -111,3 +111,7 @@ Los ocho esquemas están instalados en Panaderia-SaaS. Configuración pública c
 ## Prueba gratuita única
 
 14 días por correo verificado y cuenta, sin reinicio por eliminar/recrear la cuenta. Registro privado seudonimizado y altas posteriores sin días gratuitos, con renovación manual disponible. Ver [regla de prueba única](docs/modules/trial-once.md).
+
+## Autenticación reforzada
+
+Confirmación y recuperación por OTP, TOTP obligatorio en administración y para cuentas enroladas. Ver [autenticación y seguridad](docs/modules/auth-security.md). Configuración de correo y pruebas HTTP reales pendientes.

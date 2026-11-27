@@ -16,7 +16,19 @@ function createApi(config,fetcher=fetch){
  const scoped=(id,branch)=>'&bakery_id=eq.'+encodeURIComponent(id)+(branch?'&branch_id=eq.'+encodeURIComponent(branch):'');
  const page=(key,cursor)=>'&order='+key+'.asc&limit=200'+(cursor?'&'+key+'=gt.'+encodeURIComponent(cursor):'');
  const rpc=(name,body)=>request('/rest/v1/rpc/'+name,'POST',body,true);
- return {signup:(email,password)=>request('/auth/v1/signup','POST',{email,password}),
+ const useToken=data=>{if(!data?.access_token)throw new Error('Sesión no disponible');token=data.access_token;return data.user;};
+ const factorPath=id=>'/auth/v1/factors/'+encodeURIComponent(id);
+ return {authUser:()=>request('/auth/v1/user','GET',undefined,true),
+ authRequirements:()=>rpc('auth_requirements',{}),
+ resendConfirmation:email=>request('/auth/v1/resend','POST',{type:'signup',email}),
+ recover:email=>request('/auth/v1/recover','POST',{email}),
+ async verifyEmail(email,code,type){if(!['signup','recovery'].includes(type)||!/^\d{6}$/.test(code))throw Error('Código inválido');token=null;return useToken(await request('/auth/v1/verify','POST',{email,token:code,type}));},
+ updatePassword:password=>request('/auth/v1/user','PUT',{password},true),
+ async logoutAll(){try{if(token)await request('/auth/v1/logout?scope=global','POST',undefined,true);}finally{token=null;}},
+ enrollTotp:()=>request('/auth/v1/factors','POST',{factor_type:'totp',issuer:'Panaderia SaaS'},true),
+ removeFactor:id=>request(factorPath(id),'DELETE',undefined,true),
+ async verifyTotp(id,code){if(!/^\d{6}$/.test(code))throw Error('Código inválido');const challenge=await request(factorPath(id)+'/challenge','POST',{},true);if(!challenge?.id)throw Error('Desafío inválido');const data=await request(factorPath(id)+'/verify','POST',{challenge_id:challenge.id,code},true);useToken(data);},
+ signup:(email,password)=>request('/auth/v1/signup','POST',{email,password}),
  async login(email,password){token=null;const data=await request('/auth/v1/token?grant_type=password','POST',{email,password});if(!data?.access_token)throw new Error('Sesión no disponible');token=data.access_token;return data.user;},
  async logout(){try{if(token)await request('/auth/v1/logout?scope=local','POST',undefined,true);}finally{token=null;}},
  hasSession:()=>!!token,
