@@ -59,3 +59,7 @@ Borrador SQL de catálogo, saldos por sucursal, movimientos atómicos, mínimos,
 ## Fase 4.2 — Recetas y producción
 
 Borrador SQL de recetas versionadas, rendimiento, lotes, consumo atómico y costos referenciales históricos. Pruebas incorporadas a CI. Ver [producción](docs/production.md). El frontend sigue en demostración.
+
+## Fase 5.1 — Compras y ventas
+
+Borrador SQL de proveedores, recepciones, reposición de materias primas, inventario terminado por lote y ventas multilínea. Pruebas integradas a CI. Ver [comercial](docs/commerce.md). Pendiente caja, precios, facturación e integración real.
