@@ -55,3 +55,7 @@ Portal independiente con registro, inicio/cierre de sesión y selección de nego
 ## Fase 4 — Inventario e insumos
 
 Borrador SQL de catálogo, saldos por sucursal, movimientos atómicos, mínimos, RLS e idempotencia. Pruebas incorporadas a CI; se corrigió la ambigüedad de variable en el test de alta. El frontend continúa en demostración. Ver [inventario](docs/inventory.md).
+
+## Fase 4.2 — Recetas y producción
+
+Borrador SQL de recetas versionadas, rendimiento, lotes, consumo atómico y costos referenciales históricos. Pruebas incorporadas a CI. Ver [producción](docs/production.md). El frontend sigue en demostración.
