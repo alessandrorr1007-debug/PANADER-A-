@@ -47,3 +47,7 @@ Tema exclusivamente claro y paleta de panadería conservada. Se rediseñaron nav
 ## Fase 3 — Fundación multiempresa
 
 Se incorpora un borrador PostgreSQL con empresas, membresías, roles, sucursales y RLS, además de pruebas de aislamiento y un flujo de CI. El frontend sigue en demostración; sin despliegue ni conexión a Supabase. Ver [arquitectura](docs/tenant-architecture.md). Las pruebas de PostgreSQL quedan pendientes de ejecución en CI.
+
+## Fase 3 — Acceso y alta inicial
+
+Portal independiente con registro, inicio/cierre de sesión y selección de negocio/sucursal, preparado para Auth y Data API. Alta inicial transaccional definida en SQL. Configuración vacía por defecto, sin datos reales. Ver [acceso](docs/access.md). Las nuevas pruebas se ejecutarán en CI; falta integración real y revisión de seguridad en Supabase.

@@ -23,3 +23,5 @@ El fichero database/tenant-foundation.sql es un borrador de diseño, no una migr
 Referencias: https://supabase.com/docs/guides/database/postgres/row-level-security y https://supabase.com/docs/guides/api/securing-your-api.
 
 Siguiente: aprovisionamiento seguro, autenticación y conexión del frontend. Mantener la interfaz actual como demostración hasta validar el aislamiento real.
+
+Actualización: el borrador de alta inicial está en database/onboarding.sql; permite crear únicamente el primer negocio de una cuenta confirmada. Ver [acceso](access.md).
