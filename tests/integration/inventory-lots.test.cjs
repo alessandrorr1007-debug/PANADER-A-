@@ -1,0 +1,4 @@
+const assert=require('node:assert/strict');const {lotStatus}=require('../../frontend/inventory/inventory-controller.js');const {purchaseDraft}=require('../../frontend/commerce/commerce-controller.js');
+assert.equal(lotStatus(null,'2026-11-27'),'Sin fecha');assert.equal(lotStatus('2026-11-26','2026-11-27'),'Vencido');assert.equal(lotStatus('2026-11-27','2026-11-27'),'Vence pronto');assert.equal(lotStatus('2026-12-04','2026-11-27'),'Vence pronto');assert.equal(lotStatus('2026-12-05','2026-11-27'),'Disponible');
+const d=purchaseDraft([{id:'i',quantity:'1.5',cost:'4',lotCode:'ABC',expiry:'2026-12-01'}],[{id:'i',active:true}]);assert.deepEqual(d.items,[{ingredient_id:'i',quantity:1.5,unit_cost:4,lot_code:'ABC',expires_on:'2026-12-01'}]);assert.equal(d.cents,600n);
+console.log('Lot alert dates and purchase lot metadata passed');

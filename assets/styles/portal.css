@@ -24,3 +24,5 @@ body:has(#account:not([hidden])) .workspace{max-width:none;padding:0;gap:0;min-h
 .auth-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.auth-secret{display:block;background:#FAF6EF;padding:12px;overflow-wrap:anywhere;margin:12px 0;border:1px solid var(--line);border-radius:8px;user-select:all}#auth-flow,#admin-auth-flow{margin:14px 0}#auth-flow>button,#admin-auth-flow>button{margin:6px 6px 6px 0}#auth-flow label,#admin-auth-flow label{display:block}
 
 .recipe-line{grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto}.commerce-line.purchase-line{grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto}@media(max-width:760px){.recipe-line,.commerce-line.purchase-line{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.commerce-line.purchase-line{grid-template-columns:repeat(3,minmax(0,1fr))}.commerce-line.purchase-line button{justify-self:start}#waste-form{max-width:560px;margin:16px 0}#entry-lot[hidden]{display:none}@media(max-width:760px){.commerce-line.purchase-line{grid-template-columns:repeat(2,minmax(0,1fr))}}

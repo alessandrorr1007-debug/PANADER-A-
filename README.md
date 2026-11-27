@@ -119,3 +119,7 @@ Confirmación y recuperación por OTP, TOTP obligatorio en administración y par
 ## Almacén e insumos — unidades y costos
 
 Conversiones exactas de g/ml y actualización transaccional del costo promedio por compra; historial de costos. Ver [unidades y costos](docs/modules/inventory-costs.md).
+
+## Almacén avanzado
+
+Lotes, vencimientos, FEFO, existencias utilizables y mermas por lote. Ver [lotes y mermas](docs/modules/inventory-lots.md).
