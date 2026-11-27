@@ -63,3 +63,7 @@ Borrador SQL de recetas versionadas, rendimiento, lotes, consumo atómico y cost
 ## Fase 5.1 — Compras y ventas
 
 Borrador SQL de proveedores, recepciones, reposición de materias primas, inventario terminado por lote y ventas multilínea. Pruebas integradas a CI. Ver [comercial](docs/commerce.md). Pendiente caja, precios, facturación e integración real.
+
+## Fase 5.2 — Caja, precios y reportes
+
+Borrador SQL de turnos, ingresos/egresos, arqueo, precios por versión y reportes diarios. Las nuevas ventas requieren caja abierta y precio configurado. Ver [finanzas](docs/finance.md). CI incorpora pruebas de permisos, totales, diferencias y reintentos; pendiente conexión real.

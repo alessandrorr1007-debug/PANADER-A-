@@ -1,0 +1,67 @@
+begin;
+insert into auth.users(id) values ('00000000-0000-4000-8000-000000000001'),('00000000-0000-4000-8000-000000000002'),('00000000-0000-4000-8000-000000000003'),('00000000-0000-4000-8000-000000000004');
+insert into public.bakeries(id,name) values ('10000000-0000-4000-8000-000000000001','A'),('10000000-0000-4000-8000-000000000002','B');
+insert into public.bakery_members(bakery_id,user_id,role) values ('10000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000001','owner'),('10000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','viewer'),('10000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000003','operator'),('10000000-0000-4000-8000-000000000002','00000000-0000-4000-8000-000000000004','owner');
+insert into public.branches(id,bakery_id,name) values ('20000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000001','Centro'),('20000000-0000-4000-8000-000000000002','10000000-0000-4000-8000-000000000002','Centro');
+insert into public.ingredients(id,bakery_id,name,unit,reference_cost) values ('30000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000001','Harina','kg',4);
+insert into public.suppliers(id,bakery_id,name) values ('50000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000001','Proveedor');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001',true);
+do $$ declare v_recipe uuid; v_batch uuid; v_shift uuid; v_entry uuid; v_sale uuid; begin
+ perform public.receive_purchase('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000001','[{"ingredient_id":"30000000-0000-4000-8000-000000000001","quantity":10,"unit_cost":3.5}]');
+ v_recipe:=public.create_recipe_version('10000000-0000-4000-8000-000000000001','Pan',100,'[{"ingredient_id":"30000000-0000-4000-8000-000000000001","quantity":5}]');
+ v_batch:=public.complete_production('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_recipe,'40000000-0000-4000-8000-000000000002',100);
+ perform public.set_recipe_price('10000000-0000-4000-8000-000000000001',v_recipe,0.5);
+ begin perform public.record_sale('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000003','cash',jsonb_build_array(jsonb_build_object('batch_id',v_batch,'units',1,'unit_price',0.5))); raise exception 'sale without shift'; exception when check_violation then null; end;
+ v_shift:=public.open_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000004',100);
+ if v_shift<>public.open_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000004',100) then raise exception 'open retry'; end if;
+ begin perform public.open_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000005',100); raise exception 'two shifts'; exception when unique_violation then null; end;
+ begin perform public.record_sale('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000006','cash',jsonb_build_array(jsonb_build_object('batch_id',v_batch,'units',1,'unit_price',0.4))); raise exception 'wrong price'; exception when check_violation then null; end;
+ v_sale:=public.record_sale('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000007','cash',jsonb_build_array(jsonb_build_object('batch_id',v_batch,'units',20,'unit_price',0.5)));
+ perform public.record_sale('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000008','wallet',jsonb_build_array(jsonb_build_object('batch_id',v_batch,'units',10,'unit_price',0.5)));
+ v_entry:=public.add_cash_entry('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,'40000000-0000-4000-8000-000000000009','in',5,'Test');
+ if v_entry<>public.add_cash_entry('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,'40000000-0000-4000-8000-000000000009','in',5,'Test') then raise exception 'cash retry'; end if;
+ begin perform public.add_cash_entry('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,'40000000-0000-4000-8000-000000000009','in',6,'Test'); raise exception 'cash conflict'; exception when unique_violation then null; end;
+ perform public.add_cash_entry('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,'40000000-0000-4000-8000-000000000010','out',3,'Test');
+ begin perform public.add_cash_entry('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,'40000000-0000-4000-8000-000000000011','out',113,'Test'); raise exception 'cash underflow'; exception when check_violation then null; end;
+ if (select expected_cash from public.cash_summary)<>112 or (select digital_sales from public.cash_summary)<>5 then raise exception 'cash calculation'; end if;
+ if (select revenue from public.daily_sales_summary)<>15 or (select estimated_ingredient_cost from public.daily_sales_summary)<>6 or (select estimated_ingredient_margin from public.daily_sales_summary)<>9 then raise exception 'margin calculation'; end if;
+ if (select received_cost from public.daily_purchase_summary)<>35 then raise exception 'purchase summary'; end if;
+ perform public.set_recipe_price('10000000-0000-4000-8000-000000000001',v_recipe,0.6);
+ if (select revenue from public.daily_sales_summary)<>15 then raise exception 'historical price changed'; end if;
+ perform public.close_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,111);
+ if (select difference from public.cash_summary)<>-1 then raise exception 'cash difference'; end if;
+ if v_shift<>public.close_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,111) then raise exception 'close retry'; end if;
+ begin perform public.close_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,112); raise exception 'rewrite closed'; exception when unique_violation then null; end;
+ begin perform public.add_cash_entry('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,'40000000-0000-4000-8000-000000000012','in',1,'Test'); raise exception 'entry after close'; exception when invalid_parameter_value then null; end;
+ if v_sale<>public.record_sale('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000007','cash',jsonb_build_array(jsonb_build_object('batch_id',v_batch,'units',20,'unit_price',0.5))) then raise exception 'sale retry after close'; end if;
+ begin perform public.record_sale('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000013','cash',jsonb_build_array(jsonb_build_object('batch_id',v_batch,'units',1,'unit_price',0.6))); raise exception 'sale after close'; exception when check_violation then null; end;
+ perform public.open_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000014',50);
+ begin update public.cash_shifts set opening_amount=0; raise exception 'direct write'; exception when insufficient_privilege then null; end;
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000003',true);
+do $$ declare v_batch uuid; v_shift uuid; v_recipe uuid; begin
+ select batch_id,recipe_id into v_batch,v_recipe from public.finished_stock;
+ select shift_id into v_shift from public.cash_summary where closed_at is null;
+ begin perform public.set_recipe_price('10000000-0000-4000-8000-000000000001',v_recipe,0.1); raise exception 'operator price'; exception when insufficient_privilege then null; end;
+ begin perform public.add_cash_entry('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001',v_shift,'40000000-0000-4000-8000-000000000015','in',1,'Test'); raise exception 'operator entry'; exception when insufficient_privilege then null; end;
+ perform public.record_sale('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000016','card',jsonb_build_array(jsonb_build_object('batch_id',v_batch,'units',10,'unit_price',0.6)));
+ if (select expected_cash from public.cash_summary where closed_at is null)<>50 then raise exception 'digital counted as cash'; end if;
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);
+do $$ begin
+ if (select count(*) from public.cash_summary)<>2 then raise exception 'viewer read'; end if;
+ begin perform public.open_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000017',1); raise exception 'viewer open'; exception when insufficient_privilege then null; end;
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000004',true);
+do $$ begin
+ if exists(select 1 from public.cash_summary) or exists(select 1 from public.daily_sales_summary) or exists(select 1 from public.daily_purchase_summary) or exists(select 1 from public.recipe_prices) then raise exception 'foreign read'; end if;
+ begin perform public.open_cash_shift('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000018',1); raise exception 'foreign open'; exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+set local role anon;
+do $$ begin
+ begin perform count(*) from public.cash_summary; raise exception 'anon read'; exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+rollback;
