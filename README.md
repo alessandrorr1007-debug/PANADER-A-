@@ -299,3 +299,7 @@ El catálogo asocia una ficha comercial (nombre, categoría, SKU y estado) a cad
 
 
 **Acceso unificado:** `access.html` es el único formulario de acceso. El rol de plataforma se consulta al servidor después de autenticar, cumplir MFA y registrar la sesión. El panel de plataforma se monta en memoria solo para ese rol; no existe enlace público de administración. `admin.html` queda únicamente como redirección de compatibilidad. Las cuentas de plataforma se aprovisionan privadamente; las funciones de Supabase siguen verificando sus permisos.
+
+
+## Demostraciones por rol
+Desde `index.html`, entra a `demo.html?rol=platform`, `demo.html?rol=owner` o `demo.html?rol=employee`. La demo monta las plantillas y los controladores originales de `access.html`, sin cargar el cliente de Supabase ni la autenticación. Cambia entre roles y prueba cortesías, cobros ficticios, permisos del trabajador y operaciones de ejemplo; el estado se comparte solo en memoria y se restablece al recargar. Los datos de sucursales se comparten en esta simulación simplificada; traslados, conciliación, merma por lote y entrega final de pedidos se muestran pero no se ejecutan. No es un entorno de pruebas de seguridad del backend, no envía correos ni pagos y no modifica cuentas reales. Para ejecutar localmente sirve la raíz por HTTP (`python -m http.server 8000`) y abre `http://localhost:8000/demo.html`.

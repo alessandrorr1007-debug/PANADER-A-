@@ -2,9 +2,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const root=path.resolve(__dirname,'../..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const exists=p=>assert.ok(fs.existsSync(path.join(root,p)),p);
-for(const p of ['index.html','access.html','admin.html']){
+for(const p of ['index.html','access.html','admin.html','demo.html']){
  const html=read(p);
- for(const m of html.matchAll(/(?:src|href)="([^"]+)"/g)){const ref=m[1];if(/^(?:https?:|#|mailto:|data:)/.test(ref))continue;exists(ref);}
+ for(const m of html.matchAll(/(?:src|href)="([^"]+)"/g)){const ref=m[1];if(/^(?:https?:|#|mailto:|data:)/.test(ref))continue;exists(ref.split(/[?#]/)[0]);}
  for(const m of html.matchAll(/<script[^>]+src="([^"]+)"/g))new Function(read(m[1]));
 }
 const access=read('access.html'),admin=read('admin.html');

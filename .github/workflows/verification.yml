@@ -13,6 +13,7 @@ jobs:
         with:
           node-version: '22'
       - run: node tests/unit/ui.test.cjs
+      - run: node tests/integration/role-demo.test.cjs
       - run: node tests/integration/access.test.cjs
       - run: node tests/integration/inventory.test.cjs
       - run: node tests/integration/production.test.cjs

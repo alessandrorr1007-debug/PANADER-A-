@@ -1,0 +1,7 @@
+/* Public, isolated demonstration only. */
+.role-demo-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 22px;border-bottom:1px solid var(--line);background:white;flex-wrap:wrap}
+.role-demo-toolbar>div:first-child{display:grid;gap:4px}.role-demo-brand{font-size:19px;font-weight:800;color:var(--brand)}.role-demo-toolbar small{font-size:10px;font-weight:700;letter-spacing:.06em}
+.role-demo-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.role-demo-actions select{width:auto;margin:0}.role-demo-actions .link{margin:0}
+#demo-notice{margin:12px 18px;padding:10px 13px;border:1px solid var(--line);background:#f5e6d5;border-radius:10px;font-size:13px}
+#demo-root{min-width:0}.role-demo #workspace-shell{min-height:calc(100vh - 90px)}.role-demo .saas-sidebar{height:auto;max-height:100vh}.role-demo #platform-workspace.admin-layout{padding-top:8px}
+@media(max-width:760px){.role-demo-toolbar{padding:12px}.role-demo-actions{width:100%}.role-demo-actions select{flex:1;min-width:125px}.role-demo-actions label{width:100%}.role-demo #demo-notice{margin:10px 12px}.role-demo .saas-sidebar{max-height:none}}
