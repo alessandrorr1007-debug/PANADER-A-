@@ -107,3 +107,7 @@ Invitaciones por correo verificado, sesión operativa única y comunicaciones de
 ## Instancia dedicada de Supabase
 
 Los ocho esquemas están instalados en Panaderia-SaaS. Configuración pública conectada a su URL y clave publicable. Consultar [instancia y verificación](docs/installation/supabase-instance.md). Pendiente Auth real por navegador, aprovisionamiento de superadministrador, publicación y validación E2E. No se contrataron servicios adicionales.
+
+## Prueba gratuita única
+
+14 días por correo verificado y cuenta, sin reinicio por eliminar/recrear la cuenta. Registro privado seudonimizado y altas posteriores sin días gratuitos, con renovación manual disponible. Ver [regla de prueba única](docs/modules/trial-once.md).

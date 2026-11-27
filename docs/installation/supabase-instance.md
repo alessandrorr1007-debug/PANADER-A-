@@ -10,3 +10,5 @@
 - Antes de uso real, registrar y confirmar la cuenta administrativa desde el portal con su propio correo; un operador autorizado debe añadir su UUID verificado a bakery_private.platform_admins. Nunca se autoconcede el rol. No hay administrador provisionado.
 - Los precios y medios de pago permanecen deshabilitados hasta decisión explícita. No hay cobro automático, proveedor de pago, cuenta bancaria configurada, publicación web ni prueba de navegador real.
 - No usar datos reales de clientes antes de la validación de autenticación, API, navegador, backups y revisión de permisos. No contratar servicios de pago sin autorización.
+
+La migración adicional trial_once añade el registro privado de pruebas y la verificación de elegibilidad. No borrar su secreto ni el historial al eliminar usuarios. Consultar docs/modules/trial-once.md.

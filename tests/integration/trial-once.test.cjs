@@ -1,0 +1,4 @@
+const assert=require('node:assert/strict');const {createApi}=require('../../frontend/shared/api-client.js');
+(async()=>{const calls=[];const api=createApi({url:'https://example.supabase.co',key:'sb_publishable_test'},async(url,opts)=>{calls.push({url,opts});return {ok:true,status:200,json:async()=>url.includes('grant_type')?{access_token:'fixture'}:false};});
+await assert.rejects(api.trialEligible());await api.login('test@example.test','password');assert.equal(await api.trialEligible(),false);assert.ok(calls.at(-1).url.endsWith('/rpc/trial_eligible'));assert.equal(calls.at(-1).opts.body,'{}');assert.equal(calls.at(-1).opts.headers.Authorization,'Bearer fixture');console.log('Trial eligibility RPC: own signed session only, no arbitrary email parameter');
+})().catch(e=>{console.error(e);process.exitCode=1});

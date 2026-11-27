@@ -22,6 +22,7 @@ jobs:
       - run: node tests/unit/workspace.test.cjs
       - run: node tests/integration/repository-layout.test.cjs
       - run: node tests/integration/accounts-billing.test.cjs
+      - run: node tests/integration/trial-once.test.cjs
   database:
     runs-on: ubuntu-latest
     services:
@@ -46,4 +47,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y postgresql-client
-      - run: psql -X -v ON_ERROR_STOP=1 -f tests/database/mock-auth.sql -f backend/database/tenant-foundation.sql -f tests/database/tenant-isolation.sql -f backend/database/onboarding.sql -f tests/database/onboarding.sql -f backend/database/inventory.sql -f tests/database/inventory.sql -f backend/database/production.sql -f tests/database/production.sql -f backend/database/commerce.sql -f tests/database/commerce.sql -f backend/database/finance.sql -f tests/database/finance.sql -f backend/database/subscriptions.sql -f tests/database/subscriptions.sql -f tests/database/mock-sessions.sql -f backend/database/accounts-billing.sql -f tests/database/accounts-billing.sql
+      - run: psql -X -v ON_ERROR_STOP=1 -f tests/database/mock-auth.sql -f backend/database/tenant-foundation.sql -f tests/database/tenant-isolation.sql -f backend/database/onboarding.sql -f tests/database/onboarding.sql -f backend/database/inventory.sql -f tests/database/inventory.sql -f backend/database/production.sql -f tests/database/production.sql -f backend/database/commerce.sql -f tests/database/commerce.sql -f backend/database/finance.sql -f tests/database/finance.sql -f backend/database/subscriptions.sql -f tests/database/subscriptions.sql -f tests/database/mock-sessions.sql -f backend/database/accounts-billing.sql -f tests/database/accounts-billing.sql -f backend/database/trial-once.sql -f tests/database/trial-once.sql

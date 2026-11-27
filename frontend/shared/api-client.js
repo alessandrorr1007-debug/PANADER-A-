@@ -55,6 +55,7 @@ function createApi(config,fetcher=fetch){
  plans:()=>list('saas_plans','select=code,name,branch_limit,member_limit&order=code.asc'),
  customers:(cursor='')=>request('/rest/v1/rpc/list_customers?order=bakery_id.asc&limit=200'+(cursor?'&bakery_id=gt.'+encodeURIComponent(cursor):''),'POST',{},true),
  changeSubscription:(id,plan,status,until)=>rpc('set_subscription',{p_bakery:id,p_plan:plan,p_status:status,p_valid_until:until}),
+ trialEligible:()=>rpc('trial_eligible',{}),
  registerSession:label=>rpc('register_portal_session',{p_label:label}), sessionStatus:()=>rpc('portal_session_status',{}),
  sessions:()=>rpc('my_portal_sessions',{}),revokeSession:id=>rpc('revoke_portal_session',{p_session:id}),
  inviteWorker:(id,email,role)=>rpc('invite_worker',{p_bakery:id,p_email:email,p_role:role}),myInvitations:()=>rpc('my_invitations',{}),
