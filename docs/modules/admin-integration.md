@@ -10,3 +10,6 @@
 
 
 **UI de plataforma:** cuatro secciones (Resumen, Clientes, Planes y cobros, Pagos), tarjetas de indicadores y planes basadas en datos del servidor, filtros y estados vacíos diferenciados, tabla de clientes en tarjetas en móvil, formularios apilados y navegación adaptable. Se mantiene el inicio de sesión común y la autorización en servidor; no se agregan permisos ni operaciones. Los iconos son SVG locales, sin librerías ni fotografías externas.
+
+
+**Cortesías:** alta privada por correo normalizado, plan y fecha opcional. Un correo confirmado sin negocio puede reclamarla al crear su panadería. Una cortesía queda vinculada a una única panadería; no se transfieren beneficios por cambio de correo. Suspensión y cancelación bloquean nuevas operaciones según las reglas existentes, conservando los datos. Cancelación definitiva. No se reemplazan períodos activos pagados ni pagos pendientes; si la cortesía vence, el superadministrador puede extenderla o cancelarla para gestionar una transición a pago. No hay cobro ni registro de pago ficticio. La autorización exige MFA y sesión de plataforma; los cambios quedan auditados. La vigencia indefinida se representa como fecha finita lejana en la suscripción y se muestra como indefinida al usuario.
