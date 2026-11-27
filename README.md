@@ -303,3 +303,7 @@ El catálogo asocia una ficha comercial (nombre, categoría, SKU y estado) a cad
 
 ## Demostraciones por rol
 Desde `index.html`, entra a `demo.html?rol=platform`, `demo.html?rol=owner` o `demo.html?rol=employee`. La demo monta las plantillas y los controladores originales de `access.html`, sin cargar el cliente de Supabase ni la autenticación. Cambia entre roles y prueba cortesías, cobros ficticios, permisos del trabajador y operaciones de ejemplo; el estado se comparte solo en memoria y se restablece al recargar. Los datos de sucursales se comparten en esta simulación simplificada; traslados, conciliación, merma por lote y entrega final de pedidos se muestran pero no se ejecutan. No es un entorno de pruebas de seguridad del backend, no envía correos ni pagos y no modifica cuentas reales. Para ejecutar localmente sirve la raíz por HTTP (`python -m http.server 8000`) y abre `http://localhost:8000/demo.html`.
+
+
+### Mejora del panel de demostración
+Los archivos de estilos, controladores y plantilla se versionan conjuntamente para evitar mezclas de caché; cuando se actualicen sus dependencias se debe incrementar el parámetro `v`. La demo verifica la compatibilidad de la navegación antes de montar el panel. El administrador inicia en Resumen, con los 13 módulos, métricas, historial ficticio de ventas y estado del negocio. La prueba Chromium cubre escritorio, móvil, ventas simuladas y cambio de roles. No modifica la interfaz autenticada ni Supabase.

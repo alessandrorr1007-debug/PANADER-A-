@@ -5,7 +5,7 @@ const exists=p=>assert.ok(fs.existsSync(path.join(root,p)),p);
 for(const p of ['index.html','access.html','admin.html','demo.html']){
  const html=read(p);
  for(const m of html.matchAll(/(?:src|href)="([^"]+)"/g)){const ref=m[1];if(/^(?:https?:|#|mailto:|data:)/.test(ref))continue;exists(ref.split(/[?#]/)[0]);}
- for(const m of html.matchAll(/<script[^>]+src="([^"]+)"/g))new Function(read(m[1]));
+ for(const m of html.matchAll(/<script[^>]+src="([^"]+)"/g))new Function(read(m[1].split(/[?#]/)[0]));
 }
 const access=read('access.html'),admin=read('admin.html');
 assert.ok(access.indexOf('frontend/shared/api-client.js')<access.indexOf('frontend/auth/access-controller.js'));

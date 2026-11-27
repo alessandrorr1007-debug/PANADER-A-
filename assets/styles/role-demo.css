@@ -5,3 +5,62 @@
 #demo-notice{margin:12px 18px;padding:10px 13px;border:1px solid var(--line);background:#f5e6d5;border-radius:10px;font-size:13px}
 #demo-root{min-width:0}.role-demo #workspace-shell{min-height:calc(100vh - 90px)}.role-demo .saas-sidebar{height:auto;max-height:100vh}.role-demo #platform-workspace.admin-layout{padding-top:8px}
 @media(max-width:760px){.role-demo-toolbar{padding:12px}.role-demo-actions{width:100%}.role-demo-actions select{flex:1;min-width:125px}.role-demo-actions label{width:100%}.role-demo #demo-notice{margin:10px 12px}.role-demo .saas-sidebar{max-height:none}}
+
+/* Full-width workspace: no login card around the authenticated demo. */
+.role-demo{background:#faf6ef}
+.role-demo #demo-root .demo-workspace-frame{width:100%;min-width:0;padding:0;margin:0;border:0;background:transparent}
+.role-demo #workspace-shell{grid-template-columns:238px minmax(0,1fr);align-items:start}
+.role-demo .saas-sidebar{min-height:calc(100vh - 108px);height:auto;max-height:100vh;overflow-y:auto;padding:18px 12px;gap:12px}
+.role-demo .saas-main{padding:18px clamp(16px,2.5vw,32px) 32px}
+.role-demo .saas-header{padding:16px 20px}
+.role-demo #branch-box{margin-top:14px}
+.role-demo .scope-toolbar{display:flex;align-items:center;padding:10px 14px;gap:12px;margin-bottom:14px}
+.role-demo .scope-toolbar>div{display:flex;align-items:center;gap:12px;max-width:none}
+.role-demo .scope-toolbar>div>label{white-space:nowrap}
+.role-demo .scope-toolbar select{min-width:140px;margin:0}
+.role-demo #branch-info{margin:0;font-size:12px}
+.role-demo .welcome-panel{padding:20px 22px}
+.role-demo .welcome-panel h2{font-size:26px}
+.role-demo .overview-kpis{margin:14px 0;gap:12px}
+.role-demo .overview-kpi{position:relative;padding:15px;gap:6px;min-height:115px}
+.role-demo .overview-kpi strong{font-size:25px}
+.role-demo .overview-kpi .overview-icon{width:34px;height:34px}
+.role-demo .overview-kpi small{font-size:12px;font-weight:600}
+.role-demo .overview-links{gap:10px}
+.role-demo .overview-links button{min-height:62px;background:#fff}
+.role-demo .overview-links button:hover{background:#fcf8f2}
+.demo-admin-summary{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;margin:0 0 14px}
+.demo-summary-card{min-width:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.demo-summary-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
+.demo-summary-head h3{font-size:16px;margin:0 0 3px;letter-spacing:-.2px}
+.demo-summary-head small{font-size:11px}
+.demo-summary-tag{font-size:10px;color:var(--brand);background:var(--tint);padding:5px 8px;border-radius:6px;font-weight:650}
+.demo-chart-total{font-size:26px;display:block;margin-bottom:14px;letter-spacing:-.6px}
+.demo-sales-bars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.demo-sales-col{display:grid;grid-template-rows:15px 96px auto;gap:5px;text-align:center;min-width:0}
+.demo-sales-col small{font-size:10px;overflow:hidden;white-space:nowrap}
+.demo-sales-track{display:flex;align-items:flex-end;justify-content:center;background:repeating-linear-gradient(to top,#ede3d8 0px,#ede3d8 1px,transparent 1px,transparent 33.333%);min-width:0}
+.demo-sales-bar{background:#c58b43;border-radius:5px 5px 0 0;width:65%;max-width:44px}
+.demo-sales-col:last-child .demo-sales-bar{background:#8b451f}
+.demo-status-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:12px}
+.demo-status-row strong{text-align:right;font-size:12px}
+.demo-stock-list{margin-top:10px;background:#faf0df;border-radius:8px;padding:9px 11px}
+.demo-stock-list p{font-size:12px;margin:0;color:#844508}
+.role-demo #demo-notice{margin:8px 16px;font-size:12px;padding:8px 12px}
+@media(max-width:1050px){.demo-admin-summary{grid-template-columns:1fr}.role-demo #workspace-shell{grid-template-columns:215px minmax(0,1fr)}}
+@media(max-width:760px){
+ .role-demo #workspace-shell{grid-template-columns:minmax(0,1fr)}
+ .role-demo .saas-sidebar{height:auto;min-height:0;max-height:none;overflow:visible;padding:9px 12px}
+ .role-demo .saas-main{padding:12px}
+ .role-demo .saas-header{padding:14px}
+ .role-demo .scope-toolbar{padding:10px;align-items:flex-start}
+ .role-demo .scope-toolbar>div{width:100%;min-width:0}
+ .role-demo .scope-toolbar select{min-width:0;flex:1}
+ .role-demo .welcome-panel{padding:16px}
+ .role-demo .welcome-panel h2{font-size:22px}
+ .role-demo .overview-kpi{min-height:100px;padding:12px}
+ .role-demo .overview-kpi strong{font-size:20px}
+ .demo-summary-card{padding:14px}
+ .demo-sales-col{grid-template-rows:14px 80px auto}
+ .demo-sales-bars{gap:4px}
+}

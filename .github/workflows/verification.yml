@@ -31,6 +31,16 @@ jobs:
       - run: node tests/integration/employee-permissions.test.cjs
       - run: node tests/integration/production-costs.test.cjs
       - run: node tests/integration/catalog-orders.test.cjs
+  demo-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --no-package-lock playwright@1.55.0
+      - run: npx playwright install --with-deps chromium
+      - run: node tests/integration/role-demo-browser.test.cjs
   database:
     runs-on: ubuntu-latest
     services:
