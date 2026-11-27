@@ -292,3 +292,7 @@ En el selector de sucursal, el administrador titular puede crear sucursales hast
 ### Rendimiento real y costos de producción
 
 Registra unidades planificadas, unidades realmente obtenidas y gastos declarados de mano de obra, energía y otros. El consumo se calcula con la cantidad planificada y el stock terminado con la real. El costo del lote queda registrado y se reparte entre unidades reales. Reportes incluyen margen de producción vendida, sin confundirlo con utilidad neta. [Detalles](docs/modules/production-costs.md).
+
+### Catálogo, punto de venta y encargos
+
+El catálogo asocia una ficha comercial (nombre, categoría, SKU y estado) a cada versión de receta y utiliza su precio configurado. El punto de venta incorpora buscador y tarjetas para añadir al carrito; los productos inactivos no se venden. Pedidos y clientes permite registrar clientes, encargos con fecha y líneas, confirmar, marcar listo, cancelar o entregar. Al entregar se comprueba stock/precio y se registra una única venta vinculada; requiere caja abierta. Los pedidos no reservan stock ni cobran adelantos. [Detalles](docs/modules/catalog-orders.md).

@@ -1,5 +1,5 @@
 'use strict';
-const workspaceRoutes=Object.freeze({"home":"Resumen","inventory":"Almacén e insumos","production":"Recetas y producción","purchases":"Compras","sales":"Punto de venta","cash":"Caja","reports":"Reportes","subscription":"Mi suscripción","business":"Mi negocio"});
+const workspaceRoutes=Object.freeze({"home":"Resumen","inventory":"Almacén e insumos","production":"Recetas y producción","purchases":"Compras","sales":"Punto de venta","catalog":"Catálogo","orders":"Pedidos y clientes","cash":"Caja","reports":"Reportes","subscription":"Mi suscripción","business":"Mi negocio"});
 function resolveWorkspaceRoute(route,ready,hasBusiness){if(!Object.prototype.hasOwnProperty.call(workspaceRoutes,route))route='home';if(route==='business')return route;if(route==='subscription')return hasBusiness?route:'business';return ready?route:'business';}
 function routeVisible(routes,route){return String(routes).split(/\s+/).includes(route);}
 function createWorkspaceNavigation(){

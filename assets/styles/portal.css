@@ -31,3 +31,16 @@ body:has(#account:not([hidden])) .workspace{max-width:none;padding:0;gap:0;min-h
 [data-nav][hidden]{display:none!important}
 
 #branch-create-form{display:flex;flex-wrap:wrap;align-items:end;gap:8px}#branch-create-form[hidden]{display:none}#branch-create-form input{width:min(230px,100%)}#branch-create-form small{flex-basis:100%}
+
+/* Compact light-theme storefront and cart. */
+.pos-layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:16px;align-items:start}
+.pos-products{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:12px 0;max-height:440px;overflow:auto;padding:2px}
+.pos-product{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:8px;min-height:105px;background:#fff!important;text-align:left;border:1px solid #e4d6c5!important;padding:14px!important;border-radius:12px!important}
+.pos-product:hover:not(:disabled){border-color:#8B451F!important;background:#fff8ef!important}
+.pos-product small{color:#6F5D50;font-size:.78rem}.pos-product b{color:#8B451F;font-size:1.12rem;margin-top:auto}
+.pos-cart{background:#fcf8f2;border:1px solid #e8dccd;border-radius:14px;padding:16px}
+.pos-cart .commerce-line{grid-template-columns:minmax(0,1fr) 75px auto}
+.pos-cart #sale-total{font-size:1.3rem;font-weight:700;color:#8B451F}
+.order-line{display:grid;grid-template-columns:minmax(0,1fr) 75px auto;gap:8px;margin:8px 0}
+#order-rows td:last-child{min-width:155px}#order-rows td:last-child button,#order-rows td:last-child select{margin:3px 0;width:100%;white-space:normal}
+@media(max-width:800px){.pos-layout{grid-template-columns:1fr}.pos-products{max-height:330px}.pos-cart .commerce-line{grid-template-columns:minmax(0,1fr) 65px auto}}
