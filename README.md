@@ -99,3 +99,7 @@ Navegación de nueve vistas, resumen con datos consultados y diseño responsive 
 ## Organización del repositorio
 
 Consulta el [mapa de archivos](docs/architecture/repository-layout.md). Las páginas de entrada conservan sus rutas (`index.html`, `access.html`, `admin.html`). La configuración pública está en `frontend/config/public-config.js`. Los esquemas SQL se encuentran en `backend/database/` y siguen siendo borradores, no migraciones aplicadas. Las pruebas están en `tests/unit`, `tests/integration` y `tests/database`.
+
+## Cuentas, sesiones y cobros manuales
+
+Invitaciones por correo verificado, sesión operativa única y comunicaciones de pago verificadas por administración. Ver [cuentas y cobros](docs/modules/accounts-billing.md). Instancia dedicada, configuración y pruebas reales pendientes.

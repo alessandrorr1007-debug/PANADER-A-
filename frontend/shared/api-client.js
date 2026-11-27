@@ -54,6 +54,16 @@ function createApi(config,fetcher=fetch){
  dailyPurchases:(id,branch,from,to,cursor='')=>list('daily_purchase_summary','select=business_date,receipt_count,received_cost'+scoped(id,branch)+'&business_date=gte.'+encodeURIComponent(from)+'&business_date=lte.'+encodeURIComponent(to)+page('business_date',cursor)),
  plans:()=>list('saas_plans','select=code,name,branch_limit,member_limit&order=code.asc'),
  customers:(cursor='')=>request('/rest/v1/rpc/list_customers?order=bakery_id.asc&limit=200'+(cursor?'&bakery_id=gt.'+encodeURIComponent(cursor):''),'POST',{},true),
- changeSubscription:(id,plan,status,until)=>rpc('set_subscription',{p_bakery:id,p_plan:plan,p_status:status,p_valid_until:until})};
+ changeSubscription:(id,plan,status,until)=>rpc('set_subscription',{p_bakery:id,p_plan:plan,p_status:status,p_valid_until:until}),
+ registerSession:label=>rpc('register_portal_session',{p_label:label}), sessionStatus:()=>rpc('portal_session_status',{}),
+ sessions:()=>rpc('my_portal_sessions',{}),revokeSession:id=>rpc('revoke_portal_session',{p_session:id}),
+ inviteWorker:(id,email,role)=>rpc('invite_worker',{p_bakery:id,p_email:email,p_role:role}),myInvitations:()=>rpc('my_invitations',{}),
+ acceptInvitation:id=>rpc('accept_invitation',{p_invite:id}),teamMembers:id=>rpc('team_members',{p_bakery:id}),teamInvitations:id=>rpc('team_invitations',{p_bakery:id}),
+ revokeInvitation:(id,invite)=>rpc('revoke_invitation',{p_bakery:id,p_invite:invite}),removeWorker:(id,user)=>rpc('remove_worker',{p_bakery:id,p_user:user}),
+ billingOptions:()=>rpc('billing_options',{}),billingPayments:id=>rpc('my_billing_payments',{p_bakery:id}),
+ submitPayment:(id,req,plan,period,method,reference,amount)=>rpc('submit_billing_payment',{p_bakery:id,p_request:req,p_plan:plan,p_period:period,p_method:method,p_reference:reference,p_amount:amount}),
+ pendingPayments:()=>rpc('pending_billing_payments',{}),reviewPayment:(id,approve,note)=>rpc('review_billing_payment',{p_payment:id,p_approve:approve,p_note:note}),
+ setBillingPrice:(plan,period,amount,enabled)=>rpc('set_billing_price',{p_plan:plan,p_period:period,p_amount:amount,p_enabled:enabled}),
+ setBillingMethod:(method,instructions,enabled)=>rpc('set_billing_method',{p_method:method,p_instructions:instructions,p_enabled:enabled})};
 }
 if(typeof module!=='undefined')module.exports={validateConfig,createApi};

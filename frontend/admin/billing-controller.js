@@ -1,0 +1,18 @@
+'use strict';
+function createBillingAdmin(api,run,refreshAdmin){
+ const $=id=>document.getElementById(id),say=t=>{$('admin-billing-message').textContent=t;};
+ const methodNames={yape:'Yape',plin:'Plin',transfer:'Transferencia'},plans={starter:'Inicial',growth:'Crecimiento',business:'Empresa'};
+ const money=n=>'S/ '+Number(n).toFixed(2);
+ function clear(){for(const id of ['admin-billing-options','admin-payments'])$(id).replaceChildren();$('price-setting').reset();$('method-setting').reset();say('');}
+ function line(id,title,detail){const r=document.createElement('div');r.className='service-row';const b=document.createElement('div'),t=document.createElement('strong'),d=document.createElement('small');t.textContent=title;d.textContent=detail;b.append(t,d);r.append(b);$(id).append(r);return r;}
+ async function refresh(){const [o,payments]=await Promise.all([api.billingOptions(),api.pendingPayments()]);$('admin-billing-options').replaceChildren();$('admin-payments').replaceChildren();
+ for(const p of o.prices)line('admin-billing-options',plans[p.plan_code]+' · '+(p.period==='month'?'Mensual':'Anual'),money(p.amount)+' · '+(p.enabled?'Publicado':'Deshabilitado'));
+ for(const m of o.methods)line('admin-billing-options',methodNames[m.method],m.instructions+' · '+(m.enabled?'Habilitado':'Deshabilitado'));
+ if(!o.prices.length&&!o.methods.length)line('admin-billing-options','Sin configuración','Configura precios y medios antes de aceptar pagos.');
+ for(const p of payments){const row=line('admin-payments',p.bakery_name+' · '+money(p.amount),plans[p.plan_code]+' · '+(p.period==='month'?'Mensual':'Anual')+' · '+methodNames[p.method]+' · Ref. '+p.reference);const form=document.createElement('form');const note=document.createElement('input');note.required=true;note.maxLength=200;note.placeholder='Motivo / verificación del abono';note.setAttribute('aria-label','Nota de revisión');const choice=document.createElement('select');choice.setAttribute('aria-label','Decisión');for(const [v,t] of [['','Seleccionar'],['approve','Aprobar pago verificado'],['reject','Rechazar']]){const op=document.createElement('option');op.value=v;op.textContent=t;choice.append(op);}choice.required=true;const button=document.createElement('button');button.type='submit';button.textContent='Confirmar revisión';form.append(note,choice,button);form.addEventListener('submit',e=>{e.preventDefault();run(async()=>{if(!note.value.trim()||!choice.value)return;const approve=choice.value==='approve';if(!confirm(approve?'¿Confirmas que verificaste el abono real y deseas extender la suscripción?':'¿Rechazar esta comunicación de pago?'))return;await api.reviewPayment(p.id,approve,note.value.trim());await refreshAdmin();say('Revisión registrada.');});});row.append(form);}
+ if(!payments.length)line('admin-payments','Sin pagos pendientes','No hay operaciones por revisar.');
+ }
+ $('price-setting').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const p=$('price-plan').value,period=$('price-period').value,value=$('price-value').value,enabled=$('price-enabled').checked;if(!/^\d+(?:\.\d{1,2})?$/.test(value)||Number(value)<=0)return;if(!confirm('¿Guardar este precio de suscripción?'))return;await api.setBillingPrice(p,period,value,enabled);await refresh();say('Precio guardado.');});});
+ $('method-setting').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const method=$('method-type').value,instructions=$('method-instructions').value.trim(),enabled=$('method-enabled').checked;if(!instructions)return;if(!confirm('¿Guardar estas instrucciones de pago?'))return;await api.setBillingMethod(method,instructions,enabled);await refresh();say('Medio guardado.');});});
+ return {clear,refresh};
+}
