@@ -39,3 +39,7 @@ Se verificó sintaxis JavaScript y siete comprobaciones de datos de ejemplo, ale
 ## Identidad visual
 
 Tema claro obligatorio. Fondo crema `#FAF6EF`, superficies blancas `#FFFFFF`, texto cacao `#38271D`, botones marrón tostado `#8B451F`, acento dorado `#C58B43`. Alertas en ámbar con texto oscuro. Se comprobaron 8 pares de contraste de texto (mínimo 4.5:1) y 5 regresiones de configuración, además de las 19 pruebas existentes. Pendiente revisión visual en navegador.
+
+## Refinamiento visual — dashboard y módulos
+
+Tema exclusivamente claro y paleta de panadería conservada. Se rediseñaron navegación, cabecera, tarjetas KPI, acciones rápidas, gráfica con escala, alertas con barras de nivel, tablas, resúmenes de almacén/insumos/recetas/producción y estado vacío de compras. Ventas y reportes reutilizan la gráfica de ejemplo. No se añadieron operaciones reales ni dependencias externas. Se verificaron 32 comprobaciones de lógica, configuración y componentes generados mediante ejecución JavaScript; falta prueba visual y funcional en navegador real.
