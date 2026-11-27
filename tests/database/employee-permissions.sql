@@ -1,0 +1,57 @@
+begin;
+insert into auth.users(id,email,email_confirmed_at) values('00000000-0000-4000-8000-000000000001','owner@example.test',now()),('00000000-0000-4000-8000-000000000002','employee@example.test',now()),('00000000-0000-4000-8000-000000000003','outside@example.test',now());
+insert into auth.sessions(id,user_id) values('30000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000001'),('30000000-0000-4000-8000-000000000002','00000000-0000-4000-8000-000000000002'),('30000000-0000-4000-8000-000000000003','00000000-0000-4000-8000-000000000003');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001',true);
+select set_config('request.jwt.claim.session_id','30000000-0000-4000-8000-000000000001',true);
+select public.register_portal_session('Owner fixture');
+do $$ declare b uuid;br uuid;i uuid;r uuid;begin
+ b:=public.create_initial_bakery('Permissions bakery','Main');
+ select id into br from public.branches where bakery_id=b;
+ insert into public.ingredients(bakery_id,name,unit,reference_cost) values(b,'Harina','kg',2) returning id into i;
+ perform public.record_stock_movement(b,br,i,gen_random_uuid(),'in',10,'Inicio');
+ r:=public.create_recipe_version(b,'Pan',100,jsonb_build_array(jsonb_build_object('ingredient_id',i,'quantity',2)));
+ perform public.set_recipe_price(b,r,1);
+ perform public.open_cash_shift(b,br,gen_random_uuid(),0);
+ perform set_config('test.bakery',b::text,true);perform set_config('test.branch',br::text,true);perform set_config('test.ingredient',i::text,true);perform set_config('test.recipe',r::text,true);
+ perform set_config('test.invite',public.invite_employee(b,'employee@example.test',array['production'])::text,true);
+ if cardinality(public.my_permissions(b))<>8 then raise exception 'Owner grants incomplete';end if;
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);
+select set_config('request.jwt.claim.session_id','30000000-0000-4000-8000-000000000002',true);
+select public.register_portal_session('Employee fixture');
+select public.accept_invitation(current_setting('test.invite')::uuid);
+do $$ declare b uuid:=current_setting('test.bakery')::uuid;br uuid:=current_setting('test.branch')::uuid;i uuid:=current_setting('test.ingredient')::uuid;r uuid:=current_setting('test.recipe')::uuid;batch uuid;begin
+ if public.my_permissions(b)<>array['production']::text[] then raise exception 'Invitation grants lost';end if;
+ batch:=public.complete_production(b,br,r,gen_random_uuid(),100);
+ perform set_config('test.batch',batch::text,true);
+ if (select quantity from public.usable_stock where ingredient_id=i)<>8 then raise exception 'Production did not consume stock';end if;
+ begin perform public.record_stock_movement(b,br,i,gen_random_uuid(),'out',1,'Denied');raise exception 'Direct stock bypass';exception when insufficient_privilege then null;end;
+ begin perform public.record_lot_movement(b,br,i,gen_random_uuid(),'in',1,'Denied',null,null,null);raise exception 'Lot bypass';exception when insufficient_privilege then null;end;
+ begin perform public.record_sale(b,br,gen_random_uuid(),'cash',jsonb_build_array(jsonb_build_object('batch_id',batch,'units',1,'unit_price',1)));raise exception 'Sales bypass';exception when insufficient_privilege then null;end;
+ begin insert into public.ingredients(bakery_id,name,unit) values(b,'Denied','kg');raise exception 'Catalog bypass';exception when insufficient_privilege then null;end;
+ begin perform public.invite_employee(b,'outside@example.test',array['sales']);raise exception 'Team bypass';exception when insufficient_privilege then null;end;
+ begin perform public.set_employee_permissions(b,auth.uid(),array['sales']);raise exception 'Self escalation';exception when insufficient_privilege then null;end;
+ begin perform * from public.team_members(b);raise exception 'Team privacy bypass';exception when insufficient_privilege then null;end;
+ begin perform public.set_recipe_price(b,r,2);raise exception 'Price bypass';exception when insufficient_privilege then null;end;
+ if exists(select 1 from public.sales) or exists(select 1 from public.cash_shifts) then raise exception 'Unrelated data exposed';end if;
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001',true);
+select set_config('request.jwt.claim.session_id','30000000-0000-4000-8000-000000000001',true);
+select public.set_employee_permissions(current_setting('test.bakery')::uuid,'00000000-0000-4000-8000-000000000002',array['sales']);
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);
+select set_config('request.jwt.claim.session_id','30000000-0000-4000-8000-000000000002',true);
+do $$ declare b uuid:=current_setting('test.bakery')::uuid;br uuid:=current_setting('test.branch')::uuid;r uuid:=current_setting('test.recipe')::uuid;batch uuid:=current_setting('test.batch')::uuid;begin
+ if public.my_permissions(b)<>array['sales']::text[] then raise exception 'New permissions not reflected';end if;
+ perform public.record_sale(b,br,gen_random_uuid(),'cash',jsonb_build_array(jsonb_build_object('batch_id',batch,'units',1,'unit_price',1)));
+ begin perform public.complete_production(b,br,r,gen_random_uuid(),100);raise exception 'Revocation ignored';exception when insufficient_privilege then null;end;
+ if exists(select 1 from public.ingredients) then raise exception 'Ingredient catalog exposed';end if;
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000003',true);
+select set_config('request.jwt.claim.session_id','30000000-0000-4000-8000-000000000003',true);
+select public.register_portal_session('Outsider fixture');
+do $$ begin
+ begin perform public.set_employee_permissions(current_setting('test.bakery')::uuid,'00000000-0000-4000-8000-000000000002',array['sales']);raise exception 'Cross tenant grant';exception when insufficient_privilege then null;end;
+ if exists(select 1 from public.sales) then raise exception 'Cross tenant sales';end if;
+end $$;
+rollback;

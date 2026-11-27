@@ -16,6 +16,12 @@ function inventoryPermissions(role,subscription,now=Date.now()){
  const manager=active&&['owner','admin'].includes(role);
  return {active,manager,movement:active&&['owner','admin','operator'].includes(role)};
 }
+const employeePermissionLabels=Object.freeze({inventory:'Almacén e insumos',recipes:'Crear recetas',production:'Registrar producción',purchases:'Compras y proveedores',sales:'Registrar ventas',prices:'Configurar precios',cash:'Gestionar caja',reports:'Consultar reportes'});
+function modulePermissions(scope,subscription,manage,move=manage,now=Date.now()){
+ const active=!!subscription&&['trial','active'].includes(subscription.status)&&Date.parse(subscription.valid_until)>now;
+ const has=key=>scope?.role==='owner'||(Array.isArray(scope?.grants)&&scope.grants.includes(key));
+ return {active,manager:active&&has(manage),movement:active&&has(move),has};
+}
 function decimal(raw,precision,max,allowZero=false){
  const s=String(raw).trim();if(!new RegExp('^\\d+(?:\\.\\d{1,'+precision+'})?$').test(s))throw Error('Cantidad inválida');
  const n=Number(s);if(!Number.isFinite(n)||n>max||n<0||(!allowZero&&n===0))throw Error('Cantidad fuera de rango');return n;
@@ -64,7 +70,7 @@ function createInventoryController({api,run,onChange=async()=>{}}){
  const [ingredients,balances,movements,subs,costs,usable,lotRows]=await Promise.all([collectPages(c=>api.ingredients(bakery,c),'id'),collectPages(c=>api.balances(bakery,branch,c),'ingredient_id'),api.lotMovements(bakery,branch),api.subscription(bakery),api.costHistory(bakery,branch),collectPages(c=>api.usableBalances(bakery,branch,c),'ingredient_id'),collectPages(c=>api.lots(bakery,branch,c),'id')]);
  if(!Array.isArray(movements)||!Array.isArray(subs)||!Array.isArray(costs))throw Error('Invalid response');
  const usableMap=new Map(usable.map(r=>[r.ingredient_id,Number(r.quantity)]));lots=lotRows;rows=inventoryRows(ingredients,balances).map(r=>({...r,usable:usableMap.get(r.id)||0})).sort((a,b)=>a.name.localeCompare(b.name,'es'));
- permissions=inventoryPermissions(role,subs[0]);const active=rows.filter(r=>r.active);
+ permissions=modulePermissions(scope,subs[0],'inventory');const active=rows.filter(r=>r.active);
  $('inv-total').textContent=active.length;$('inv-low').textContent=active.filter(r=>r.usable<r.minimum).length;$('inv-missing').textContent=active.filter(r=>r.missing).length;
  table();options('mov-item');options('min-item');syncUnits('mov');syncUnits('min');$('mov-rows').replaceChildren();
  const map=new Map(rows.map(r=>[r.id,r]));renderLots(map);for(const m of movements){const i=map.get(m.ingredient_id);addRow($('mov-rows'),[new Date(m.created_at).toLocaleString('es-PE',{timeZone:'America/Lima'}),i?.name||m.ingredient_id,m.movement_category==='waste'?'Merma':m.direction==='in'?'Entrada':'Salida',m.quantity+' '+(i?.unit||''),m.reason]);}
@@ -89,4 +95,4 @@ function createInventoryController({api,run,onChange=async()=>{}}){
  $('minimum-form').addEventListener('submit',e=>{e.preventDefault();run(async()=>{if(!scope||!permissions.manager)return;let qty;try{qty=Number(baseQuantity($('min-qty').value,$('min-measure').value,rows.find(r=>r.id===$('min-item').value)?.unit,true));}catch{message('Mínimo inválido.');return;}const item=$('min-item').value;if(!item)return;await execute(async()=>{await api.minimum(scope.bakery,scope.branch,item,qty);$('min-qty').value='';},'Mínimo actualizado.');});});
  return {open,clear,refresh};
 }
-if(typeof module!=='undefined')module.exports={collectPages,inventoryRows,inventoryPermissions,decimal,requestTracker,allowedUnits,baseQuantity,lotStatus};
+if(typeof module!=='undefined')module.exports={collectPages,inventoryRows,inventoryPermissions,decimal,requestTracker,allowedUnits,baseQuantity,lotStatus,modulePermissions,employeePermissionLabels};

@@ -75,6 +75,7 @@ function createApi(config,fetcher=fetch){
  trialEligible:()=>rpc('trial_eligible',{}),
  registerSession:label=>rpc('register_portal_session',{p_label:label}), sessionStatus:()=>rpc('portal_session_status',{}),
  sessions:()=>rpc('my_portal_sessions',{}),revokeSession:id=>rpc('revoke_portal_session',{p_session:id}),
+ myPermissions:id=>rpc('my_permissions',{p_bakery:id}),teamPermissions:id=>rpc('team_permissions',{p_bakery:id}),inviteEmployee:(id,email,permissions)=>rpc('invite_employee',{p_bakery:id,p_email:email,p_permissions:permissions}),setEmployeePermissions:(id,user,permissions)=>rpc('set_employee_permissions',{p_bakery:id,p_user:user,p_permissions:permissions}),
  inviteWorker:(id,email,role)=>rpc('invite_worker',{p_bakery:id,p_email:email,p_role:role}),myInvitations:()=>rpc('my_invitations',{}),
  acceptInvitation:id=>rpc('accept_invitation',{p_invite:id}),teamMembers:id=>rpc('team_members',{p_bakery:id}),teamInvitations:id=>rpc('team_invitations',{p_bakery:id}),
  revokeInvitation:(id,invite)=>rpc('revoke_invitation',{p_bakery:id,p_invite:invite}),removeWorker:(id,user)=>rpc('remove_worker',{p_bakery:id,p_user:user}),

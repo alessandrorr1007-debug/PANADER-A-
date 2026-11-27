@@ -43,7 +43,7 @@ function createFinanceController({api,run,onChange=async()=>{}}){
  shifts=ss;current=open[0]?ss.find(x=>x.shift_id===open[0].shift_id)||null:null;
  // An unusually old open shift must never disappear from the list.
  if(open.length&&!current)throw Error('Open shift not in history');
- permissions=inventoryPermissions(role,sub[0]);$('fin-shift-status').textContent=current?'Caja abierta desde '+date(current.opened_at):'No hay un turno abierto. Abre caja en Compras y punto de venta.';
+ permissions=modulePermissions(scope,sub[0],'cash');$('fin-shift-status').textContent=current?'Caja abierta desde '+date(current.opened_at):'No hay un turno abierto. Abre caja en Compras y punto de venta.';
  for(const [id,key] of Object.entries({'fin-opening':'opening_amount','fin-cash-sales':'cash_sales','fin-digital':'digital_sales','fin-in':'cash_in','fin-out':'cash_out','fin-expected':'expected_cash'}))$(id).textContent=current?fmt(current[key]):'—';
  $('cash-entry-form').hidden=!permissions.manager||!current;$('fin-shifts').replaceChildren();$('fin-shift-select').replaceChildren();
  for(const c of shifts){row('fin-shifts',[date(c.opened_at),c.closed_at?date(c.closed_at):'Abierta',fmt(c.expected_cash),fmt(c.counted_cash),fmt(c.difference)]);const op=document.createElement('option');op.value=c.shift_id;op.textContent=date(c.opened_at)+(c.closed_at?' · Cerrado':' · Abierto');$('fin-shift-select').append(op);}

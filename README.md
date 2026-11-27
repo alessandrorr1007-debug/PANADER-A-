@@ -29,7 +29,7 @@ El repositorio tiene tres entradas independientes:
 | Página | Para quién | Qué encontrarás |
 |---|---|---|
 | [index.html](index.html) | Personas que desean conocer el diseño | Demostración con datos ficticios, sin operaciones reales. |
-| [access.html](access.html) | Propietarios y trabajadores | Portal conectado a Supabase. Registro, inicio de sesión y operaciones de cada panadería. |
+| [access.html](access.html) | Administradores y empleados | Portal conectado a Supabase. Registro, inicio de sesión y operaciones de cada panadería. |
 | [admin.html](admin.html) | Superadministrador autorizado | Gestión de suscripciones, clientes, precios de planes y revisión de pagos. |
 
 Para probarlo en una computadora, consulta las instrucciones del apartado 10. Abrir estos archivos desde GitHub muestra su código; para utilizar la interfaz se necesita servirlos por HTTP/HTTPS. El portal público definitivo está pendiente de publicación.
@@ -122,7 +122,7 @@ Consulta indicadores de ventas, compras, unidades vendidas y margen estimado de 
 
 ### Mi negocio
 
-Consulta tu cuenta, membresías, sucursales disponibles, invitaciones y sesiones. Los propietarios y administradores pueden invitar trabajadores y retirar permisos según su rol. Se permite una sola sesión operativa por cuenta; al registrar una nueva, se invalida la anterior.
+Consulta tu cuenta, membresías, sucursales disponibles, invitaciones y sesiones. Los administradores titulares pueden invitar empleados y cambiar o retirar sus permisos. Se permite una sola sesión operativa por cuenta; al registrar una nueva, se invalida la anterior.
 
 El alta inicial crea una sucursal. La base de datos tiene soporte y límites para varias sucursales, pero la gestión completa de altas, traslados y conciliaciones desde la interfaz todavía está pendiente.
 
@@ -148,17 +148,17 @@ Para este ejemplo suponemos que la harina no está vencida, que hay stock de los
 
 ## 5. Trabajadores y permisos
 
-Cada persona tiene su propia cuenta. No compartas contraseñas entre trabajadores.
+El SaaS tiene **tres niveles de usuario**. Cada empleado tiene su propia cuenta; no comparte la contraseña del administrador y no compra otra suscripción.
 
-| Rol | Facultades generales |
+| Nivel | Facultades |
 |---|---|
-| Propietario | Gestionar su negocio, suscripción, trabajadores, insumos, compras, recetas, producción, ventas y caja. |
-| Administrador de panadería | Gestionar operaciones del negocio, insumos, recetas, compras, caja y trabajadores de menor rol. No puede crear otro propietario ni gestionar cobros de la plataforma. |
-| Operario | Registrar movimientos normales de almacén, confirmar producción y vender con los permisos habilitados. |
-| Consulta | Consultar información autorizada, sin crear operaciones. |
-| Superadministrador | Administrar clientes y suscripciones de la plataforma. No adquiere acceso automático a los datos operativos de cada panadería. |
+| Superadministrador | Creador del SaaS: gestiona clientes, precios, pagos y suscripciones. No accede automáticamente a datos operativos de clientes. |
+| Administrador | Titular del negocio que contrata la suscripción. Administra su panadería, sucursales, empleados, permisos y operaciones. |
+| Empleado | Trabajador invitado por el administrador. Solo realiza operaciones autorizadas, dentro de su negocio y vigencia. No puede gestionar empleados, permisos ni pagos de suscripción. |
 
-Para invitar a un trabajador, abre **Mi negocio**, indica su correo y rol. La invitación tiene una vigencia de siete días y reserva un cupo del plan. El trabajador registra su cuenta con ese correo y acepta la invitación dentro del portal. Actualmente debes comunicarle la invitación por otro medio; el sistema no envía un correo de invitación automático.
+El administrador puede elegir permisos independientes al invitar a un empleado y modificarlos después de que acepte: almacén, recetas, producción, compras, ventas, precios, caja y reportes. Sin permisos, el empleado no puede operar ni ver datos operativos. El menú oculta módulos no autorizados; algunos datos compartidos son necesarios para módulos habilitados (por ejemplo, stock para producción y caja abierta para ventas). Los permisos son por panadería, no por sucursal todavía.
+
+En **Mi negocio**, introduce el correo del empleado y selecciona permisos. El empleado registra y verifica su cuenta, y acepta la invitación. La invitación dura siete días y reserva un cupo. No hay correo de invitación automático; comparte la URL del portal. Retirar una membresía conserva su historial de operaciones.
 
 ## 6. Prueba gratuita y suscripciones
 
@@ -282,3 +282,5 @@ Los documentos técnicos históricos describen el estado de sus respectivas fase
 ---
 
 Panadería SaaS — proyecto independiente para la gestión de panaderías. La implementación está en desarrollo y no se presenta como un servicio comercial listo para producción.
+
+Ver [tres niveles y permisos](docs/modules/employee-permissions.md) para el diseño de autorización y sus límites.

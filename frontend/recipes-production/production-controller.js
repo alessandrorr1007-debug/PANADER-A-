@@ -32,7 +32,7 @@ function createProductionController({api,run,onChange=async()=>{}}){
  const {bakery,branch,role}=scope;
  const [rs,ins,bs,history,subs]=await Promise.all([collectPages(c=>api.recipes(bakery,c),'id'),collectPages(c=>api.ingredients(bakery,c),'id'),collectPages(c=>api.usableBalances(bakery,branch,c),'ingredient_id'),api.batches(bakery,branch),api.subscription(bakery)]);
  if(!Array.isArray(history)||!Array.isArray(subs))throw Error('Invalid response');
- recipes=rs.sort((a,b)=>a.name.localeCompare(b.name,'es')||Number(b.version)-Number(a.version));ingredients=ins;balances=bs;permissions=inventoryPermissions(role,subs[0]);
+ recipes=rs.sort((a,b)=>a.name.localeCompare(b.name,'es')||Number(b.version)-Number(a.version));ingredients=ins;balances=bs;permissions=modulePermissions(scope,subs[0],'recipes','production');
  $('recipe-count').textContent=recipes.length;$('recipe-usable').textContent=new Set(recipes.map(r=>r.name.trim().toLocaleLowerCase('es'))).size;$('batch-count').textContent=history.length;
  $('recipe-select').replaceChildren();for(const r of recipes){const op=document.createElement('option');op.value=r.id;op.textContent=label(r);$('recipe-select').append(op);}if(recipes.some(r=>r.id===prior))$('recipe-select').value=prior;
  $('batch-rows').replaceChildren();const byId=new Map(recipes.map(r=>[r.id,r]));for(const b of history)row('batch-rows',[new Date(b.created_at).toLocaleString('es-PE',{timeZone:'America/Lima'}),byId.has(b.recipe_id)?label(byId.get(b.recipe_id)):b.recipe_id,b.output_units,money(b.reference_cost),b.id.slice(0,8)]);if(!history.length)row('batch-rows',['Sin lotes','—','—','—','—']);
