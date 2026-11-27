@@ -28,3 +28,16 @@ assert.match(html, /--brand:#8B451F/);
 assert.match(html, /--bg:#FAF6EF/);
 assert.match(html, /--accent:#C58B43/);
 console.log('5/5 comprobaciones de configuración de paleta aprobadas');
+
+const visualChecks = new Function("const location={hash:''};"+script.split("$('nav').innerHTML=")[0]+`return [
+['tarjetas de métricas con iconos',dashboard(samples.a).includes('metric-icon')],
+['gráfico con escala',salesChart(samples.a).includes('chart-axis')],
+['alertas con indicador',dashboard(samples.a).includes('stock-track')],
+['métricas de almacén',inventoryMetrics(samples.a).includes('Disponibles')],
+['métricas de recetas',recipeMetrics(samples.a).includes('200')],
+['métricas de producción',productionMetrics(samples.a).includes('Planificados')],
+['accesos con descripción',quick().includes('Existencias y movimientos')],
+['ventas sin mezcla de clientes',!salesChart(samples.b).includes('1540')]
+]`)();
+for (const [name, passed] of visualChecks) { assert.ok(passed,name); console.log('OK '+name); }
+console.log(visualChecks.length+'/'+visualChecks.length+' comprobaciones de componentes aprobadas');
