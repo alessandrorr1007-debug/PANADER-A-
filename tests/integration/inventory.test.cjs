@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict');
-const {collectPages,inventoryRows,inventoryPermissions,decimal,requestTracker}=require('../inventory.js');
-const {createApi}=require('../access.js');
+const {collectPages,inventoryRows,inventoryPermissions,decimal,requestTracker}=require('../../frontend/inventory/inventory-controller.js');
+const {createApi}=require('../../frontend/shared/api-client.js');
 (async()=>{
  const source=[{id:'a'},{id:'b'},{id:'c'}];
  assert.deepEqual(await collectPages(async c=>source.filter(r=>r.id>c).slice(0,1),'id'),source);

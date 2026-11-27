@@ -16,12 +16,12 @@ Las tres tablas tienen RLS y permisos explícitos. Las políticas consultan la m
 CI ejecuta las pruebas UI existentes y un PostgreSQL 16 desechable con un sustituto mínimo de auth.uid() para probar RLS y permisos. No reproduce Auth, JWT, Data API ni configuración completa de Supabase. Las pruebas cubren lectura, escritura permitida y denegada, cambio de empresa, escalada de rol, membresía múltiple y acceso anónimo. No se deben ejecutar fixtures en producción.
 
 Para validar localmente en PostgreSQL vacío, con psql como administrador:
-`psql -X -v ON_ERROR_STOP=1 -f tests/database/mock-auth.sql -f database/tenant-foundation.sql -f tests/database/tenant-isolation.sql`
+`psql -X -v ON_ERROR_STOP=1 -f tests/database/mock-auth.sql -f backend/database/tenant-foundation.sql -f tests/database/tenant-isolation.sql`
 
-El fichero database/tenant-foundation.sql es un borrador de diseño, no una migración oficial de Supabase. Cuando exista un entorno Supabase local dedicado: generar la migración mediante CLI, validar sobre base nueva, ejecutar pruebas de Auth y Data API y revisar Database Advisors. No instalar mock-auth.sql en Supabase.
+El fichero backend/database/tenant-foundation.sql es un borrador de diseño, no una migración oficial de Supabase. Cuando exista un entorno Supabase local dedicado: generar la migración mediante CLI, validar sobre base nueva, ejecutar pruebas de Auth y Data API y revisar Database Advisors. No instalar mock-auth.sql en Supabase.
 
 Referencias: https://supabase.com/docs/guides/database/postgres/row-level-security y https://supabase.com/docs/guides/api/securing-your-api.
 
 Siguiente: aprovisionamiento seguro, autenticación y conexión del frontend. Mantener la interfaz actual como demostración hasta validar el aislamiento real.
 
-Actualización: el borrador de alta inicial está en database/onboarding.sql; permite crear únicamente el primer negocio de una cuenta confirmada. Ver [acceso](access.md).
+Actualización: el borrador de alta inicial está en backend/database/onboarding.sql; permite crear únicamente el primer negocio de una cuenta confirmada. Ver [acceso](../installation/access.md).

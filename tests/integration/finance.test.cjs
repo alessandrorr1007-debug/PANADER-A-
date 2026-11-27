@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict');const {localBusinessDate,reportDays,moneyCents,summarizeFinance}=require('../finance.js');const {createApi}=require('../access.js');
+const assert=require('node:assert/strict');const {localBusinessDate,reportDays,moneyCents,summarizeFinance}=require('../../frontend/cash-reports/finance-controller.js');const {createApi}=require('../../frontend/shared/api-client.js');
 (async()=>{
  assert.equal(localBusinessDate(new Date('2026-11-28T03:00:00Z')),'2026-11-27');const days=reportDays(7,new Date('2026-11-28T03:00:00Z'));assert.equal(days[0],'2026-11-21');assert.equal(days.at(-1),'2026-11-27');assert.equal(reportDays(90).length,90);assert.throws(()=>reportDays(100));
  assert.equal(moneyCents('-0.01'),-1n);assert.equal(moneyCents('123.4'),12340n);assert.throws(()=>moneyCents('1.234'));

@@ -21,7 +21,7 @@ No hay autenticación, persistencia, pagos, despliegue ni aislamiento real de da
 5. Implementar ventas, caja, reportes y auditoría.
 6. Validar planes de suscripción, límites y facturación antes de comercializar.
 
-Arquitectura objetivo propuesta: React + TypeScript, PostgreSQL, Supabase Auth y hosting estático. No hay servicios contratados.
+Arquitectura actual: HTML, CSS y JavaScript modular sin dependencias de ejecución; PostgreSQL y cliente Auth/Data API preparado para Supabase. React/TypeScript queda como alternativa futura, no requisito. No hay servicios contratados.
 
 ## Validación inicial
 
@@ -33,7 +33,7 @@ Se verificó sintaxis JavaScript y siete comprobaciones de datos de ejemplo, ale
 - Iconos SVG, accesos rápidos, cabecera fija y navegación por fragmentos URL.
 - Búsqueda insensible a tildes y mayúsculas, filtros por estado, contador de resultados y tablas desplazables.
 - Ajustes responsive y de navegación por teclado.
-- 19 comprobaciones de lógica y sintaxis validadas; repetir con Node.js: `node tests/ui.test.cjs`.
+- 19 comprobaciones de lógica y sintaxis validadas; repetir con Node.js: `node tests/unit/ui.test.cjs`.
 - Pendiente: pruebas en navegador real, revisión visual en dispositivos y validación con usuarios. No se implementó persistencia de datos ni seguridad multi-tenant. No se guardan preferencias de tema ni datos operativos localmente.
 
 ## Identidad visual
@@ -46,52 +46,56 @@ Tema exclusivamente claro y paleta de panadería conservada. Se rediseñaron nav
 
 ## Fase 3 — Fundación multiempresa
 
-Se incorpora un borrador PostgreSQL con empresas, membresías, roles, sucursales y RLS, además de pruebas de aislamiento y un flujo de CI. El frontend sigue en demostración; sin despliegue ni conexión a Supabase. Ver [arquitectura](docs/tenant-architecture.md). Las pruebas de PostgreSQL quedan pendientes de ejecución en CI.
+Se incorpora un borrador PostgreSQL con empresas, membresías, roles, sucursales y RLS, además de pruebas de aislamiento y un flujo de CI. El frontend sigue en demostración; sin despliegue ni conexión a Supabase. Ver [arquitectura](docs/architecture/multi-tenant.md). Las pruebas de PostgreSQL quedan pendientes de ejecución en CI.
 
 ## Fase 3 — Acceso y alta inicial
 
-Portal independiente con registro, inicio/cierre de sesión y selección de negocio/sucursal, preparado para Auth y Data API. Alta inicial transaccional definida en SQL. Configuración vacía por defecto, sin datos reales. Ver [acceso](docs/access.md). Las nuevas pruebas se ejecutarán en CI; falta integración real y revisión de seguridad en Supabase.
+Portal independiente con registro, inicio/cierre de sesión y selección de negocio/sucursal, preparado para Auth y Data API. Alta inicial transaccional definida en SQL. Configuración vacía por defecto, sin datos reales. Ver [acceso](docs/installation/access.md). Las nuevas pruebas se ejecutarán en CI; falta integración real y revisión de seguridad en Supabase.
 
 ## Fase 4 — Inventario e insumos
 
-Borrador SQL de catálogo, saldos por sucursal, movimientos atómicos, mínimos, RLS e idempotencia. Pruebas incorporadas a CI; se corrigió la ambigüedad de variable en el test de alta. El frontend continúa en demostración. Ver [inventario](docs/inventory.md).
+Borrador SQL de catálogo, saldos por sucursal, movimientos atómicos, mínimos, RLS e idempotencia. Pruebas incorporadas a CI; se corrigió la ambigüedad de variable en el test de alta. El frontend continúa en demostración. Ver [inventario](docs/modules/inventory.md).
 
 ## Fase 4.2 — Recetas y producción
 
-Borrador SQL de recetas versionadas, rendimiento, lotes, consumo atómico y costos referenciales históricos. Pruebas incorporadas a CI. Ver [producción](docs/production.md). El frontend sigue en demostración.
+Borrador SQL de recetas versionadas, rendimiento, lotes, consumo atómico y costos referenciales históricos. Pruebas incorporadas a CI. Ver [producción](docs/modules/production.md). El frontend sigue en demostración.
 
 ## Fase 5.1 — Compras y ventas
 
-Borrador SQL de proveedores, recepciones, reposición de materias primas, inventario terminado por lote y ventas multilínea. Pruebas integradas a CI. Ver [comercial](docs/commerce.md). Pendiente caja, precios, facturación e integración real.
+Borrador SQL de proveedores, recepciones, reposición de materias primas, inventario terminado por lote y ventas multilínea. Pruebas integradas a CI. Ver [comercial](docs/modules/commerce.md). Pendiente caja, precios, facturación e integración real.
 
 ## Fase 5.2 — Caja, precios y reportes
 
-Borrador SQL de turnos, ingresos/egresos, arqueo, precios por versión y reportes diarios. Las nuevas ventas requieren caja abierta y precio configurado. Ver [finanzas](docs/finance.md). CI incorpora pruebas de permisos, totales, diferencias y reintentos; pendiente conexión real.
+Borrador SQL de turnos, ingresos/egresos, arqueo, precios por versión y reportes diarios. Las nuevas ventas requieren caja abierta y precio configurado. Ver [finanzas](docs/modules/finance.md). CI incorpora pruebas de permisos, totales, diferencias y reintentos; pendiente conexión real.
 
 ## Fase 6 — Modelo comercial SaaS
 
-Borrador SQL de planes provisionales, prueba, vigencia, límites, acceso de consulta tras vencimiento y administración de clientes auditada. Sin cobros ni precios definidos. Ver [suscripciones](docs/subscriptions.md). Pendiente interfaz y validación real.
+Borrador SQL de planes provisionales, prueba, vigencia, límites, acceso de consulta tras vencimiento y administración de clientes auditada. Sin cobros ni precios definidos. Ver [suscripciones](docs/modules/subscriptions.md). Pendiente interfaz y validación real.
 
 ## Fase 7.1 — Integración de almacén e insumos
 
-El portal autenticado consume las consultas y RPC de inventario; incluye registro de insumos, mínimos, movimientos y consultas por sucursal. Sin credenciales configuradas no realiza llamadas. Ver [integración](docs/inventory-integration.md). Pruebas HTTP simuladas en CI; falta conexión y validación E2E.
+El portal autenticado consume las consultas y RPC de inventario; incluye registro de insumos, mínimos, movimientos y consultas por sucursal. Sin credenciales configuradas no realiza llamadas. Ver [integración](docs/modules/inventory-integration.md). Pruebas HTTP simuladas en CI; falta conexión y validación E2E.
 
 ## Fase 7.2 — Integración de recetas y producción
 
-Portal autenticado con catálogo versionado, editor de ingredientes, cálculo previo de cantidades y costo, confirmación de producción e historial. Ver [integración de producción](docs/production-integration.md). Sin conexión real configurada; pruebas en CI.
+Portal autenticado con catálogo versionado, editor de ingredientes, cálculo previo de cantidades y costo, confirmación de producción e historial. Ver [integración de producción](docs/modules/production-integration.md). Sin conexión real configurada; pruebas en CI.
 
 ## Fase 7.3 — Integración comercial
 
-Portal autenticado con proveedores, compras, existencias terminadas, precios, apertura/cierre básico de caja y ventas multilínea. Ver [integración comercial](docs/commerce-integration.md). No conectado a una instancia real; pruebas CI.
+Portal autenticado con proveedores, compras, existencias terminadas, precios, apertura/cierre básico de caja y ventas multilínea. Ver [integración comercial](docs/modules/commerce-integration.md). No conectado a una instancia real; pruebas CI.
 
 ## Fase 7.4 — Caja y reportes
 
-Portal autenticado con movimientos de efectivo, historial de arqueos, indicadores y ventas diarias (7/30/90 días). Se corrigió el validador de unidades de venta. Ver [finanzas](docs/finance-integration.md). CI pendiente; no conectado a una instancia real.
+Portal autenticado con movimientos de efectivo, historial de arqueos, indicadores y ventas diarias (7/30/90 días). Se corrigió el validador de unidades de venta. Ver [finanzas](docs/modules/finance-integration.md). CI pendiente; no conectado a una instancia real.
 
 ## Fase 7.5 — Panel SaaS
 
-Portal separado admin.html para gestión de clientes y suscripciones, con autorización RPC, filtros, indicadores y edición manual. El cliente consulta su propio plan. Ver [administración SaaS](docs/admin-integration.md). Sin administrador real ni conexión configurada; pruebas CI.
+Portal separado admin.html para gestión de clientes y suscripciones, con autorización RPC, filtros, indicadores y edición manual. El cliente consulta su propio plan. Ver [administración SaaS](docs/modules/admin-integration.md). Sin administrador real ni conexión configurada; pruebas CI.
 
 ## Fase 8.1 — Estructura visual SaaS
 
-Navegación de nueve vistas, resumen con datos consultados y diseño responsive exclusivamente claro. Se conservan controladores y permisos. Ver [estructura visual](docs/workspace-design.md). Pruebas en CI; falta navegador real.
+Navegación de nueve vistas, resumen con datos consultados y diseño responsive exclusivamente claro. Se conservan controladores y permisos. Ver [estructura visual](docs/architecture/workspace-design.md). Pruebas en CI; falta navegador real.
+
+## Organización del repositorio
+
+Consulta el [mapa de archivos](docs/architecture/repository-layout.md). Las páginas de entrada conservan sus rutas (`index.html`, `access.html`, `admin.html`). La configuración pública está en `frontend/config/public-config.js`. Los esquemas SQL se encuentran en `backend/database/` y siguen siendo borradores, no migraciones aplicadas. Las pruebas están en `tests/unit`, `tests/integration` y `tests/database`.

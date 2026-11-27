@@ -58,4 +58,4 @@ function createFinanceController({api,run,onChange=async()=>{}}){
  $('cash-entry-form').reset();await refresh();if(loaded)msg('Movimiento de caja registrado.');await onChange();});});
  return {open,clear,refresh};
 }
-if(typeof module!=='undefined'){const {centsText}=require('./commerce.js');module.exports={localBusinessDate,reportDays,moneyCents,summarizeFinance};}
+if(typeof module!=='undefined'){const {centsText}=require('../commerce/commerce-controller.js');module.exports={localBusinessDate,reportDays,moneyCents,summarizeFinance};}

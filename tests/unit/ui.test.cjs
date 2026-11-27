@@ -1,8 +1,11 @@
-// Ejecutar desde la raíz: node tests/ui.test.cjs
+// Ejecutar desde la raíz: node tests/unit/ui.test.cjs
 const fs = require('node:fs');
 const assert = require('node:assert/strict');
-const html = fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
-const script = html.split('<script>')[1].split('</script>')[0];
+const root = require('node:path').join(__dirname,'../..');
+const html = fs.readFileSync(require('node:path').join(root,'index.html'),'utf8');
+const css = fs.readFileSync(require('node:path').join(root,'assets/styles/demo.css'),'utf8');
+const script = fs.readFileSync(require('node:path').join(root,'frontend/demo/demo-controller.js'),'utf8');
+const source = html + css + script;
 new Function(script);
 const results = new Function("const location={hash:''};"+script.split("$('nav').innerHTML=")[0]+`return [
 ['nueve módulos',validPages.length===9],['iconos completos',validPages.every(k=>paths[k])],
@@ -22,11 +25,11 @@ for (const [name, passed] of results) { assert.ok(passed,name); console.log('OK 
 console.log(results.length+'/'+results.length+' comprobaciones aprobadas');
 
 // Regresión visual de configuración: solo tema claro.
-assert.match(html, /color-scheme:light/);
-assert.doesNotMatch(html, /data-theme|prefers-color-scheme|panaderia-theme|id="theme"|applyTheme\(/);
-assert.match(html, /--brand:#8B451F/);
-assert.match(html, /--bg:#FAF6EF/);
-assert.match(html, /--accent:#C58B43/);
+assert.match(source, /color-scheme:light/);
+assert.doesNotMatch(source, /data-theme|prefers-color-scheme|panaderia-theme|id="theme"|applyTheme\(/);
+assert.match(source, /--brand:#8B451F/);
+assert.match(source, /--bg:#FAF6EF/);
+assert.match(source, /--accent:#C58B43/);
 console.log('5/5 comprobaciones de configuración de paleta aprobadas');
 
 const visualChecks = new Function("const location={hash:''};"+script.split("$('nav').innerHTML=")[0]+`return [

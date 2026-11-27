@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict');const {validateConfig,createApi}=require('../access.js');
+const assert=require('node:assert/strict');const {validateConfig,createApi}=require('../../frontend/shared/api-client.js');
 (async()=>{
  const cfg=validateConfig({url:'https://example.supabase.co',publishableKey:'sb_publishable_test'});assert.ok(cfg);
  for(const url of ['http://example.supabase.co','https://example.supabase.co.evil.test','https://example.supabase.co/path','https://example.supabase.co?x=y'])assert.equal(validateConfig({url,publishableKey:'sb_publishable_test'}),null);

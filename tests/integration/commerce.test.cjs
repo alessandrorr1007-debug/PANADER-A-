@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict');const {scaled,centsText,purchaseDraft,saleDraft}=require('../commerce.js');const {createApi}=require('../access.js');
+const assert=require('node:assert/strict');const {scaled,centsText,purchaseDraft,saleDraft}=require('../../frontend/commerce/commerce-controller.js');const {createApi}=require('../../frontend/shared/api-client.js');
 (async()=>{
  assert.equal(scaled('0.001',3,1000n),1n);assert.equal(centsText(123n),'1.23');assert.equal(centsText(-1n),'-0.01');
  const ingredients=[{id:'i',active:true},{id:'j',active:false}];

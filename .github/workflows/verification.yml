@@ -12,14 +12,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node tests/ui.test.cjs
-      - run: node tests/access.test.cjs
-      - run: node tests/inventory.test.cjs
-      - run: node tests/production.test.cjs
-      - run: node tests/commerce.test.cjs
-      - run: node tests/finance.test.cjs
-      - run: node tests/admin.test.cjs
-      - run: node tests/workspace.test.cjs
+      - run: node tests/unit/ui.test.cjs
+      - run: node tests/integration/access.test.cjs
+      - run: node tests/integration/inventory.test.cjs
+      - run: node tests/integration/production.test.cjs
+      - run: node tests/integration/commerce.test.cjs
+      - run: node tests/integration/finance.test.cjs
+      - run: node tests/integration/admin.test.cjs
+      - run: node tests/unit/workspace.test.cjs
+      - run: node tests/integration/repository-layout.test.cjs
   database:
     runs-on: ubuntu-latest
     services:
@@ -44,4 +45,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y postgresql-client
-      - run: psql -X -v ON_ERROR_STOP=1 -f tests/database/mock-auth.sql -f database/tenant-foundation.sql -f tests/database/tenant-isolation.sql -f database/onboarding.sql -f tests/database/onboarding.sql -f database/inventory.sql -f tests/database/inventory.sql -f database/production.sql -f tests/database/production.sql -f database/commerce.sql -f tests/database/commerce.sql -f database/finance.sql -f tests/database/finance.sql -f database/subscriptions.sql -f tests/database/subscriptions.sql
+      - run: psql -X -v ON_ERROR_STOP=1 -f tests/database/mock-auth.sql -f backend/database/tenant-foundation.sql -f tests/database/tenant-isolation.sql -f backend/database/onboarding.sql -f tests/database/onboarding.sql -f backend/database/inventory.sql -f tests/database/inventory.sql -f backend/database/production.sql -f tests/database/production.sql -f backend/database/commerce.sql -f tests/database/commerce.sql -f backend/database/finance.sql -f tests/database/finance.sql -f backend/database/subscriptions.sql -f tests/database/subscriptions.sql

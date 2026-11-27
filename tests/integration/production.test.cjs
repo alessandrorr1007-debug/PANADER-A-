@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict');const {milliUnits,previewProduction,validateRecipeDraft}=require('../production.js');const {createApi}=require('../access.js');
+const assert=require('node:assert/strict');const {milliUnits,previewProduction,validateRecipeDraft}=require('../../frontend/recipes-production/production-controller.js');const {createApi}=require('../../frontend/shared/api-client.js');
 (async()=>{
  assert.equal(milliUnits('0.001'),1n);assert.equal(milliUnits('1.2'),1200n);
  for(const v of ['-1','1e2','NaN','0.0001'])assert.throws(()=>milliUnits(v));

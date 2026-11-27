@@ -1,4 +1,4 @@
-const assert=require('node:assert/strict');const {effectiveStatus,customerSummary,filterCustomers,subscriptionDraft}=require('../admin.js');const {createApi}=require('../access.js');
+const assert=require('node:assert/strict');const {effectiveStatus,customerSummary,filterCustomers,subscriptionDraft}=require('../../frontend/admin/admin-controller.js');const {createApi}=require('../../frontend/shared/api-client.js');
 (async()=>{
  const now=Date.parse('2026-11-27T12:00:00Z'),plans=[{code:'starter'},{code:'growth'}];
  const a={bakery_id:'a',name:'Aurora',plan_code:'starter',status:'trial',valid_until:'2026-11-28T00:00:00Z'},b={...a,bakery_id:'b',name:'Trigal',status:'active',valid_until:'2026-11-27T12:00:00Z'},c={...a,bakery_id:'c',name:'Molino',status:'suspended'};
