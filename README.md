@@ -87,3 +87,7 @@ Portal autenticado con proveedores, compras, existencias terminadas, precios, ap
 ## Fase 7.4 — Caja y reportes
 
 Portal autenticado con movimientos de efectivo, historial de arqueos, indicadores y ventas diarias (7/30/90 días). Se corrigió el validador de unidades de venta. Ver [finanzas](docs/finance-integration.md). CI pendiente; no conectado a una instancia real.
+
+## Fase 7.5 — Panel SaaS
+
+Portal separado admin.html para gestión de clientes y suscripciones, con autorización RPC, filtros, indicadores y edición manual. El cliente consulta su propio plan. Ver [administración SaaS](docs/admin-integration.md). Sin administrador real ni conexión configurada; pruebas CI.

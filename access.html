@@ -3,7 +3,7 @@
 <meta name="referrer" content="no-referrer"><title>Acceso | Panadería</title>
 <link rel="stylesheet" href="access.css"><script src="config.js" defer></script><script src="inventory.js" defer></script><script src="production.js" defer></script><script src="commerce.js" defer></script><script src="finance.js" defer></script><script src="access.js" defer></script></head>
 <body><main class="layout"><section class="brand"><a href="index.html" class="logo"><span class="mark" aria-hidden="true">✦</span> Panadería</a><div><p class="eyebrow">GESTIÓN DE NEGOCIOS</p><h1>Tu panadería, en un solo lugar.</h1><p>Organiza tus sucursales y prepara tu espacio de trabajo.</p></div><small>Almacén · Recetas · Producción</small></section>
-<section class="workspace"><div class="top"><a href="index.html">← Ver demostración</a><span class="badge">Acceso al negocio</span></div>
+<section class="workspace"><div class="top"><a href="index.html">← Ver demostración</a><a href="admin.html">Administración SaaS</a><span class="badge">Acceso al negocio</span></div>
 <div class="card"><p id="status" role="status" aria-live="polite"></p>
 <section id="setup" hidden><h2>Conexión pendiente</h2><p>El servicio de autenticación todavía no está configurado. Puedes explorar la demostración sin introducir datos personales.</p><a class="primary link" href="index.html">Abrir demostración</a></section>
 <section id="auth" hidden><p class="eyebrow">BIENVENIDO</p><h2 id="auth-title">Inicia sesión</h2><p>Accede a tu espacio de trabajo.</p>
@@ -12,7 +12,7 @@
 <section id="account" hidden><div class="account-head"><div><p class="eyebrow">TU ESPACIO DE TRABAJO</p><h2>Mis panaderías</h2><p id="account-email"></p></div><button type="button" id="logout">Salir</button></div>
 <button type="button" id="reload">Actualizar negocios</button><div id="businesses"></div>
 <form id="onboard" hidden><h3>Crea tu primera panadería</h3><label for="bakery-name">Nombre del negocio</label><input id="bakery-name" required maxlength="120"><label for="branch-name">Primera sucursal</label><input id="branch-name" required maxlength="120" value="Principal"><button class="primary">Crear espacio de trabajo</button></form>
-<div id="branch-box" hidden><label for="branch">Sucursal</label><select id="branch"></select><p id="branch-info"></p><p class="notice">Este espacio consulta únicamente tus registros. Los pagos se registran de forma informativa. No se procesan cobros ni comprobantes fiscales.</p>
+<section id="own-subscription" hidden aria-labelledby="own-plan-title"><h3 id="own-plan-title">Mi suscripción</h3><p id="own-plan-status"></p><p id="own-plan-limits"></p><small>Para renovar o cambiar de plan, contacta con la administración. No hay cobros automáticos.</small></section><div id="branch-box" hidden><label for="branch">Sucursal</label><select id="branch"></select><p id="branch-info"></p><p class="notice">Este espacio consulta únicamente tus registros. Los pagos se registran de forma informativa. No se procesan cobros ni comprobantes fiscales.</p>
 <section id="inventory" hidden aria-labelledby="inventory-title">
 <div class="inventory-head"><div><p class="eyebrow">OPERACIONES</p><h2 id="inventory-title">Almacén e insumos</h2><p id="inventory-scope"></p></div><button id="inventory-reload" type="button">Actualizar</button></div>
 <p id="inventory-message" role="status" aria-live="polite"></p><div id="inventory-content" hidden>
