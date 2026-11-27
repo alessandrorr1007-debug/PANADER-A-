@@ -115,3 +115,7 @@ Los ocho esquemas están instalados en Panaderia-SaaS. Configuración pública c
 ## Autenticación reforzada
 
 Confirmación y recuperación por OTP, TOTP obligatorio en administración y para cuentas enroladas. Ver [autenticación y seguridad](docs/modules/auth-security.md). Configuración de correo y pruebas HTTP reales pendientes.
+
+## Almacén e insumos — unidades y costos
+
+Conversiones exactas de g/ml y actualización transaccional del costo promedio por compra; historial de costos. Ver [unidades y costos](docs/modules/inventory-costs.md).

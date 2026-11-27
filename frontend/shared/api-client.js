@@ -37,6 +37,7 @@ function createApi(config,fetcher=fetch){
  create:(name,branch)=>request('/rest/v1/rpc/create_initial_bakery','POST',{p_name:name,p_branch:branch},true),
  ingredients:(id,cursor='')=>request('/rest/v1/ingredients?select=id,name,unit,reference_cost,active&bakery_id=eq.'+encodeURIComponent(id)+'&order=id.asc&limit=200'+(cursor?'&id=gt.'+encodeURIComponent(cursor):''),'GET',undefined,true),
  balances:(id,branch,cursor='')=>request('/rest/v1/stock_balances?select=ingredient_id,quantity,minimum&bakery_id=eq.'+encodeURIComponent(id)+'&branch_id=eq.'+encodeURIComponent(branch)+'&order=ingredient_id.asc&limit=200'+(cursor?'&ingredient_id=gt.'+encodeURIComponent(cursor):''),'GET',undefined,true),
+ costHistory:(id,branch)=>list('ingredient_cost_history','select=id,ingredient_id,purchased_quantity,purchased_unit_cost,previous_cost,new_cost,created_at'+scoped(id,branch)+'&order=created_at.desc,id.desc&limit=30'),
  movements:(id,branch)=>request('/rest/v1/stock_movements?select=id,ingredient_id,direction,quantity,reason,created_at&bakery_id=eq.'+encodeURIComponent(id)+'&branch_id=eq.'+encodeURIComponent(branch)+'&order=created_at.desc,id.desc&limit=30','GET',undefined,true),
  subscription:id=>request('/rest/v1/saas_subscriptions?select=plan_code,status,valid_until&bakery_id=eq.'+encodeURIComponent(id),'GET',undefined,true),
  addIngredient:(id,name,unit,cost)=>request('/rest/v1/ingredients','POST',{bakery_id:id,name,unit,reference_cost:cost},true,true),
