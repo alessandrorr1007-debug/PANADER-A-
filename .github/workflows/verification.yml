@@ -24,6 +24,7 @@ jobs:
       - run: node tests/integration/accounts-billing.test.cjs
       - run: node tests/integration/trial-once.test.cjs
       - run: node tests/integration/auth-security.test.cjs
+      - run: node tests/integration/auth-email-config.test.cjs
       - run: node tests/integration/inventory-units.test.cjs
       - run: node tests/integration/inventory-lots.test.cjs
       - run: node tests/integration/employee-permissions.test.cjs

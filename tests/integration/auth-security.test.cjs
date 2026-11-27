@@ -1,5 +1,7 @@
 const assert=require('node:assert/strict');const {createApi}=require('../../frontend/shared/api-client.js');
 (async()=>{const calls=[];const api=createApi({url:'https://example.supabase.co',key:'sb_publishable_test'},async(url,opts)=>{calls.push({url,opts});const data=url.endsWith('/challenge')?{id:'challenge'}:url.endsWith('/verify')||url.includes('grant_type')?{access_token:'new-token',user:{id:'u'}}:url.endsWith('/factors')?{id:'factor',totp:{secret:'TEST'}}:{};return {ok:true,status:200,json:async()=>data};});
+await api.signup('a@example.test','password');assert.ok(calls.at(-1).url.endsWith('/signup'));assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{email:'a@example.test',password:'password'});assert.equal(api.hasSession(),false);
+await api.verifyEmail('a@example.test','123456','signup');assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{email:'a@example.test',token:'123456',type:'signup'});await api.logout();
 await api.resendConfirmation('a@example.test');assert.deepEqual(JSON.parse(calls.at(-1).opts.body),{type:'signup',email:'a@example.test'});
 await api.recover('a@example.test');assert.ok(calls.at(-1).url.endsWith('/recover'));
 await assert.rejects(api.verifyEmail('a@example.test','bad','recovery'));
