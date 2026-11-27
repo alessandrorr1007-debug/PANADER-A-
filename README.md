@@ -91,3 +91,7 @@ Portal autenticado con movimientos de efectivo, historial de arqueos, indicadore
 ## Fase 7.5 — Panel SaaS
 
 Portal separado admin.html para gestión de clientes y suscripciones, con autorización RPC, filtros, indicadores y edición manual. El cliente consulta su propio plan. Ver [administración SaaS](docs/admin-integration.md). Sin administrador real ni conexión configurada; pruebas CI.
+
+## Fase 8.1 — Estructura visual SaaS
+
+Navegación de nueve vistas, resumen con datos consultados y diseño responsive exclusivamente claro. Se conservan controladores y permisos. Ver [estructura visual](docs/workspace-design.md). Pruebas en CI; falta navegador real.

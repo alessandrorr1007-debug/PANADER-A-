@@ -19,6 +19,7 @@ jobs:
       - run: node tests/commerce.test.cjs
       - run: node tests/finance.test.cjs
       - run: node tests/admin.test.cjs
+      - run: node tests/workspace.test.cjs
   database:
     runs-on: ubuntu-latest
     services:
