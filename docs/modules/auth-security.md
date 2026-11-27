@@ -8,3 +8,5 @@
 
 
 **Acceso unificado:** `access.html` es el único formulario de acceso. El rol de plataforma se consulta al servidor después de autenticar, cumplir MFA y registrar la sesión. El panel de plataforma se monta en memoria solo para ese rol; no existe enlace público de administración. `admin.html` queda únicamente como redirección de compatibilidad. Las cuentas de plataforma se aprovisionan privadamente; las funciones de Supabase siguen verificando sus permisos.
+
+**Interfaz de acceso:** diseño adaptable en tonos cálidos, contraseña visible solo por acción explícita (se oculta al cambiar de modo o enviar el formulario), opciones de sesión plegables, indicador de carga y estados de verificación coherentes. Sin dependencias visuales externas ni cambios a las reglas de autorización. El acceso a plataforma permanece invisible en la navegación del negocio.

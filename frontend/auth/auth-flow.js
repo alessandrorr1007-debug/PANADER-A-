@@ -4,7 +4,7 @@ function createAuthFlow({api,run,root,loginForm,notify,admin=false}){
  const node=(tag,text)=>{const el=document.createElement(tag);if(text)el.textContent=text;return el;};
  let current=null;
  function clear(){root.replaceChildren();root.hidden=true;loginForm.hidden=false;current=null;}
- function show(title,detail){root.replaceChildren();root.hidden=false;loginForm.hidden=true;root.append(node('h3',title),node('p',detail));}
+ function show(title,detail){root.replaceChildren();root.hidden=false;loginForm.hidden=true;const heading=node('h3',title);heading.tabIndex=-1;root.append(heading,node('p',detail));heading.focus();}
  function button(label,action){const b=node('button',label);b.type='button';b.addEventListener('click',()=>run(async()=>{try{await action();}catch{notify('No se pudo completar este paso. Comprueba el código, la conexión o vuelve a ingresar.');}}));root.append(b);return b;}
  function field(form,label,type,options={}){const l=node('label',label),i=node('input');i.type=type;i.required=true;Object.assign(i,options);l.append(i);form.append(l);return i;}
  function form(label,action){const f=node('form'),b=node('button',label);b.className='primary';b.type='submit';root.append(f);f.addEventListener('submit',e=>{e.preventDefault();run(async()=>{try{await action();}catch{notify('No se pudo completar este paso. Comprueba tus datos o solicita un nuevo código.');}});});return {f,b};}
