@@ -113,3 +113,60 @@ body:has(#platform-workspace:not([hidden])) .login-workspace{display:block;min-w
 
 /* Courtesy management, responsive private section. */
 .platform-nav{grid-template-columns:repeat(5,minmax(0,1fr))}.courtesy-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px}.courtesy-layout>div,.courtesy-layout>form{min-width:0}.courtesy-layout h3{margin:0 0 12px}.courtesy-layout form{align-content:start;gap:8px}.courtesy-entry{display:grid;gap:7px;border:1px solid var(--line);background:#fcf8f2;border-radius:12px;padding:14px;margin:10px 0;overflow-wrap:anywhere}.courtesy-state{font-size:12px;color:#8b451f;font-weight:700}.courtesy-actions{display:flex;flex-wrap:wrap;gap:6px}.courtesy-actions button{min-height:44px}.courtesy-entry p{font-size:12px}.courtesy-layout .platform-notice{margin:4px 0}.platform-nav button span{overflow-wrap:anywhere}@media(max-width:760px){.courtesy-layout{grid-template-columns:1fr;gap:20px}.platform-nav button{font-size:10px}}@media(max-width:360px){.platform-nav button{font-size:9px}}
+
+/* Owner and employee workspaces: role-aware navigation, compact mobile menu and team cards. */
+#workspace-shell{grid-template-columns:242px minmax(0,1fr)}
+.workspace-sidebar-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#workspace-menu-toggle{display:none;align-items:center;gap:6px}
+#workspace-menu-toggle svg{width:20px;height:20px}
+.workspace-role-card{margin:0 4px;padding:12px;background:#fcf8f2;border:1px solid var(--line);border-radius:11px;display:grid;gap:3px}
+.workspace-role-card small{font-size:10px;letter-spacing:.08em;font-weight:700}
+.workspace-role-card strong{font-size:15px;color:var(--brand)}
+.workspace-nav-label{font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:750;margin:12px 10px 4px}
+.saas-nav button{white-space:normal;line-height:1.3}
+.saas-main .saas-header{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:17px 20px}
+.saas-main .scope-toolbar{margin:0 0 16px;padding:12px 16px;flex-wrap:wrap}
+.saas-main .scope-toolbar>form{max-width:100%;min-width:0;flex:1}
+#workspace-shell .overview-kpis{grid-template-columns:repeat(auto-fit,minmax(min(155px,100%),1fr))}
+#workspace-shell .overview-kpis:not(:has(.overview-kpi:not([hidden]))){display:none}
+#workspace-shell .overview-links{grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr))}
+#workspace-shell .overview-links:not(:has(button:not([hidden]))){display:none}
+#workspace-shell[data-workspace-role=employee] .welcome-panel{background:linear-gradient(115deg,#fff,#f5e6d5)}
+#workspace-shell[data-workspace-role=employee] .overview-links button{min-height:76px}
+.workspace-empty{padding:24px 18px;background:#fff;border:1px dashed var(--line);border-radius:14px;text-align:center;margin:16px 0}
+.workspace-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.workspace-section-head h2{font-size:22px;margin:0}.workspace-section-head p{margin:4px 0 8px;font-size:13px}
+.workspace-inline-link{color:var(--brand);border:none;background:none;text-decoration:underline;padding-left:0}
+#workspace-shell #team-area h2{font-size:23px}
+#workspace-shell #invite-form{padding:16px;background:#fcf8f2;border:1px solid var(--line);border-radius:12px;max-width:700px}
+#workspace-shell #invite-form .primary{justify-self:start}
+#workspace-shell .permission-grid{grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:8px}
+#workspace-shell .permission-grid .confirmation{padding:11px;border:1px solid var(--line);background:#fff;border-radius:8px;min-height:44px}
+#workspace-shell .permission-grid .confirmation:has(input:checked){background:#f5e6d5;border-color:#c58b43}
+#workspace-shell .permission-grid input{accent-color:var(--brand);width:17px;height:17px}
+#workspace-shell .permission-editor{background:#fcf8f2;min-width:0;overflow-wrap:anywhere}
+#workspace-shell .permission-editor summary{cursor:pointer;font-weight:650;padding:7px;color:var(--brand);min-height:36px}
+#workspace-shell .permission-editor[open] summary{margin-bottom:10px}
+#workspace-shell .service-row{overflow-wrap:anywhere;min-width:0}
+@media(max-width:760px){
+ #workspace-shell{grid-template-columns:minmax(0,1fr)}
+ .saas-sidebar{padding:10px 14px;overflow:visible;position:sticky;top:0;background:#fff}
+ .workspace-role-card{display:none}
+ #workspace-menu-toggle{display:flex;min-height:44px}
+ #workspace-shell .saas-nav{display:none}
+ #workspace-shell[data-menu-open=true] .saas-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:65vh;overflow-y:auto;overflow-x:hidden;gap:4px;padding:4px 0}
+ .workspace-nav-label{grid-column:1/-1;margin-top:8px}
+ #workspace-shell .saas-nav button{width:100%;min-width:0;white-space:normal;font-size:12px;padding:10px 8px}
+ .saas-main .saas-header{padding:14px;gap:10px}
+ .saas-main .saas-header h1{font-size:22px}
+ #workspace-shell .overview-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #workspace-shell .overview-links{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #workspace-shell .overview-links button{min-height:84px;align-items:flex-start;gap:8px;padding:12px;flex-wrap:wrap}
+ #workspace-shell .overview-links button>span:nth-child(2){flex-basis:100%}
+ #workspace-shell .overview-links button>span:last-child{display:none}
+ #workspace-shell .overview-links button strong{font-size:13px}
+ #workspace-shell #invite-form .primary{width:100%}
+ #workspace-shell .inventory-table{max-width:100%;overflow-x:auto}
+ #workspace-shell input:not([type=checkbox]),#workspace-shell select{font-size:16px}
+}
+@media(max-width:350px){#workspace-shell .overview-links{grid-template-columns:1fr}#workspace-shell[data-menu-open=true] .saas-nav{grid-template-columns:1fr}}
