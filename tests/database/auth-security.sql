@@ -23,7 +23,7 @@ select public.register_portal_session('Admin');
 do $$ begin if not public.portal_session_status() then raise exception 'aal2 denied';end if;perform * from public.list_customers();end $$;
 select set_config('request.jwt.claim.aal','aal1',true);
 do $$ begin if public.portal_session_status() then raise exception 'downgrade accepted';end if;
- begin perform public.set_billing_price('starter','month',29,true);raise exception 'admin price bypass';exception when insufficient_privilege then null;end;end $;
+ begin perform public.set_billing_price('starter','month',29,true);raise exception 'admin price bypass';exception when insufficient_privilege then null;end;end $$;
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);
 select set_config('request.jwt.claim.session_id','30000000-0000-4000-8000-000000000002',true);
 do $$ begin
