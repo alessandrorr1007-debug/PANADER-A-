@@ -20,3 +20,5 @@ assert.match(html,/id="team-area"[^>]*data-route-part="team"/);
 assert.match(html,/id="workspace-menu-toggle"[^>]*aria-controls="workspace-nav"/);
 for(const route of ['reports','inventory','sales'])assert.match(html,new RegExp('data-overview-route="'+route+'"'));
 console.log('Role UI: owner, employee, no permissions, mobile menu, scoped overview passed');
+
+assert.match(html,/id="overview-access-count"/);assert.match(html,/id="overview-sales-chart"/);assert.match(css,/#workspace-shell\[data-workspace-role=employee\]/);console.log('Professional workspace components present');

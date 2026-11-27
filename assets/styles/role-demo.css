@@ -64,3 +64,6 @@
  .demo-sales-col{grid-template-rows:14px 80px auto}
  .demo-sales-bars{gap:4px}
 }
+
+/* Keep shared workspace layout and demo-only information concise. */
+.role-demo-toolbar{padding:10px 18px}.role-demo #demo-notice{background:#fffaf4;border-color:#e7d9c9}.role-demo .demo-summary-card{border-radius:12px;box-shadow:0 2px 8px #38271d05}.role-demo #demo-admin-summary{margin-top:12px}.role-demo #workspace-shell .welcome-panel{padding:18px 20px}

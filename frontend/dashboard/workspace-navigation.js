@@ -21,6 +21,7 @@ function createWorkspaceNavigation(){
  }
  const hasKpis=[...shell.querySelectorAll('[data-overview-route]')].some(el=>!el.hidden);$('overview-data-note').hidden=!hasKpis;$('overview-period').hidden=!allowed.has('reports');text('overview-period',ready&&allowed.has('reports')&&!$('finance-content').hidden?$('fin-range').textContent:'Reportes aún no disponibles.');
  $('subscription-empty').hidden=!$('own-subscription').hidden;
+ const showChart=ready&&allowed.has('reports')&&!$('finance-content').hidden&&!document.body.classList.contains('role-demo');$('overview-sales-panel').hidden=!showChart;const overviewChart=$('overview-sales-chart');overviewChart.replaceChildren();if(showChart){text('overview-sales-period',$('fin-range').textContent);for(const child of $('fin-chart').children)overviewChart.append(child.cloneNode(true));}
  const hasOperations=operationalRoutes.some(key=>allowed.has(key));$('overview-no-modules').hidden=role!=='employee'||hasOperations;$('overview-links-title').hidden=role==='employee'&&!hasOperations;
  }
  function availableRoute(next){const resolved=resolveWorkspaceRoute(next,ready,hasBusiness);return allowed.has(resolved)?resolved:'business';}
@@ -34,7 +35,8 @@ function createWorkspaceNavigation(){
  function setContext({available=false,business=false,label='',reset=false,memberRole=null,grants=[]}={}){
  ready=available;hasBusiness=business;role=memberRole==='owner'?'owner':memberRole?'employee':null;allowed=new Set(workspacePermissions(memberRole,grants,ready,hasBusiness));shell.dataset.workspaceRole=role||'account';
  text('workspace-context',label||'Selecciona tu negocio');text('workspace-role',role==='owner'?'Administrador':role==='employee'?'Trabajador':'Mi cuenta');text('workspace-eyebrow',role==='owner'?'GESTIÓN DE TU PANADERÍA':role==='employee'?'ESPACIO DE TRABAJO':'MI ESPACIO');
- text('overview-eyebrow',role==='employee'?'MI JORNADA':'VISTA GENERAL');text('overview-title',role==='employee'?'Tu espacio de trabajo':'Tu negocio, bajo control.');text('overview-description',role==='employee'?'Accede a las herramientas que te asignó tu administrador.':'Consulta los indicadores de tu sucursal y entra directamente a cada operación.');
+ text('workspace-role-detail',role==='owner'?'Gestión del negocio':role==='employee'?'Acceso por permisos':'Selecciona un negocio');const count=operationalRoutes.filter(k=>allowed.has(k)).length;text('overview-access-count',role==='employee'?count+' módulos habilitados':'Operaciones del negocio');
+ text('overview-eyebrow',role==='employee'?'MI JORNADA':'VISTA GENERAL');text('overview-title',role==='employee'?'Todo listo para tu jornada':'Tu negocio, bajo control.');text('overview-description',role==='employee'?'Accede a las herramientas que te asignó tu administrador.':'Consulta los indicadores de tu sucursal y entra directamente a cada operación.');
  const businessNav=shell.querySelector('[data-nav="business"] span');businessNav.textContent=role==='employee'?'Mi lugar de trabajo':'Mi negocio';if(reset)setMenu(false);show(reset?(ready?'home':'business'):route);
  }
  menu.addEventListener('click',()=>setMenu(menu.getAttribute('aria-expanded')!=='true'));shell.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.getAttribute('aria-expanded')==='true'){setMenu(false);menu.focus();}});

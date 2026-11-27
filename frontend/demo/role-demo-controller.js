@@ -54,7 +54,7 @@
  }
  try{
  if(typeof workspacePermissions!=='function'||workspacePermissions('owner',[],true,true).length!==13)throw Error('Versión de navegación incompatible');
- const response=await fetch('access.html?v=20261127-3',{credentials:'omit',cache:'no-store',redirect:'error'});if(!response.ok)throw Error('No se pudo cargar la interfaz');template=new DOMParser().parseFromString(await response.text(),'text/html');if(!template.querySelector('#account #workspace-menu-toggle')||!template.querySelector('#account [data-nav="team"]')||!template.querySelector('#platform-workspace-template'))throw Error('Plantillas no disponibles');
+ const response=await fetch('access.html?v=20261127-4',{credentials:'omit',cache:'no-store',redirect:'error'});if(!response.ok)throw Error('No se pudo cargar la interfaz');template=new DOMParser().parseFromString(await response.text(),'text/html');if(!template.querySelector('#account #workspace-menu-toggle')||!template.querySelector('#account [data-nav="team"]')||!template.querySelector('#platform-workspace-template'))throw Error('Plantillas no disponibles');
  const requested=new URLSearchParams(location.search).get('rol');selector.value=['platform','owner','employee'].includes(requested)?requested:'owner';selector.addEventListener('change',()=>run(()=>mount(selector.value)));$('demo-reset').addEventListener('click',()=>run(async()=>{api=createDemoData();await mount(selector.value)}));await run(()=>mount(selector.value));
  }catch(e){say('No se pudo abrir la demo. Recarga la página publicada o sirve el repositorio por HTTP local.');}
 })();
