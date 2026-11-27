@@ -44,3 +44,9 @@ body:has(#account:not([hidden])) .workspace{max-width:none;padding:0;gap:0;min-h
 .order-line{display:grid;grid-template-columns:minmax(0,1fr) 75px auto;gap:8px;margin:8px 0}
 #order-rows td:last-child{min-width:155px}#order-rows td:last-child button,#order-rows td:last-child select{margin:3px 0;width:100%;white-space:normal}
 @media(max-width:800px){.pos-layout{grid-template-columns:1fr}.pos-products{max-height:330px}.pos-cart .commerce-line{grid-template-columns:minmax(0,1fr) 65px auto}}
+
+/* Private platform workspace uses the same session and full-width layout. */
+body:has(#platform-workspace:not([hidden])) .layout{grid-template-columns:1fr}
+body:has(#platform-workspace:not([hidden])) .brand,body:has(#platform-workspace:not([hidden])) .workspace>.top,body:has(#platform-workspace:not([hidden])) .workspace>.footer{display:none}
+body:has(#platform-workspace:not([hidden])) .workspace{max-width:none;width:100%;padding:0;gap:0;justify-content:flex-start;min-height:100vh}
+#platform-workspace{width:100%;min-width:0}

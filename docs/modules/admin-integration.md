@@ -4,3 +4,6 @@
 - En access.html, los clientes consultan plan, vigencia, sucursales activas y límite de miembros. No se muestra conteo de miembros porque la política actual limita membresías a la propia cuenta. No pueden cambiar el plan.
 - No se ha creado una cuenta real de administrador. Aprovisionarla únicamente por un operador autorizado de la base de datos, nunca desde el cliente. No almacenar claves secretas ni exponer bakery_private.
 - Sin precios definitivos, cobros, pasarela, facturas ni webhooks. Pruebas Node de estados, filtros, fecha y contratos HTTP simulados; las pruebas SQL existentes validan permisos de plataforma, auditoría y aislamiento. Falta navegador, Data API real y revisión de seguridad antes de desplegar.
+
+
+**Acceso unificado:** `access.html` es el único formulario de acceso. El rol de plataforma se consulta al servidor después de autenticar, cumplir MFA y registrar la sesión. El panel de plataforma se monta en memoria solo para ese rol; no existe enlace público de administración. `admin.html` queda únicamente como redirección de compatibilidad. Las cuentas de plataforma se aprovisionan privadamente; las funciones de Supabase siguen verificando sus permisos.

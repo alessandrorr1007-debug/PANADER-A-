@@ -24,3 +24,6 @@ La sesión está en memoria y no se persiste en el dispositivo. Una nueva sesió
 ## Validación pendiente
 
 Antes de uso comercial: comprobar entrega real de correos, inicio y recuperación de sesión, MFA, autorización de superadministrador, permisos, concurrencia y navegación real en varios dispositivos; revisar límites, respaldos y políticas. No instalar mocks de Auth o datos de prueba en una instancia real. Consultar [instancia dedicada](supabase-instance.md) y [seguridad](../modules/auth-security.md).
+
+
+**Acceso unificado:** `access.html` es el único formulario de acceso. El rol de plataforma se consulta al servidor después de autenticar, cumplir MFA y registrar la sesión. El panel de plataforma se monta en memoria solo para ese rol; no existe enlace público de administración. `admin.html` queda únicamente como redirección de compatibilidad. Las cuentas de plataforma se aprovisionan privadamente; las funciones de Supabase siguen verificando sus permisos.

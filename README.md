@@ -29,8 +29,8 @@ El repositorio tiene tres entradas independientes:
 | Página | Para quién | Qué encontrarás |
 |---|---|---|
 | [index.html](index.html) | Personas que desean conocer el diseño | Demostración con datos ficticios, sin operaciones reales. |
-| [access.html](access.html) | Administradores y empleados | Portal conectado a Supabase. Registro, inicio de sesión y operaciones de cada panadería. |
-| [admin.html](admin.html) | Superadministrador autorizado | Gestión de suscripciones, clientes, precios de planes y revisión de pagos. |
+| [access.html](access.html) | Todos los usuarios autorizados | Inicio de sesión único; registro público de negocio o empleado. El servidor decide el panel correspondiente. |
+| Panel privado | Superadministrador autorizado | Se abre desde el mismo login, después de validar rol y MFA en Supabase. |
 
 Para probarlo en una computadora, consulta las instrucciones del apartado 10. Abrir estos archivos desde GitHub muestra su código; para utilizar la interfaz se necesita servirlos por HTTP/HTTPS. El portal público definitivo está pendiente de publicación.
 
@@ -296,3 +296,6 @@ Registra unidades planificadas, unidades realmente obtenidas y gastos declarados
 ### Catálogo, punto de venta y encargos
 
 El catálogo asocia una ficha comercial (nombre, categoría, SKU y estado) a cada versión de receta y utiliza su precio configurado. El punto de venta incorpora buscador y tarjetas para añadir al carrito; los productos inactivos no se venden. Pedidos y clientes permite registrar clientes, encargos con fecha y líneas, confirmar, marcar listo, cancelar o entregar. Al entregar se comprueba stock/precio y se registra una única venta vinculada; requiere caja abierta. Los pedidos no reservan stock ni cobran adelantos. [Detalles](docs/modules/catalog-orders.md).
+
+
+**Acceso unificado:** `access.html` es el único formulario de acceso. El rol de plataforma se consulta al servidor después de autenticar, cumplir MFA y registrar la sesión. El panel de plataforma se monta en memoria solo para ese rol; no existe enlace público de administración. `admin.html` queda únicamente como redirección de compatibilidad. Las cuentas de plataforma se aprovisionan privadamente; las funciones de Supabase siguen verificando sus permisos.

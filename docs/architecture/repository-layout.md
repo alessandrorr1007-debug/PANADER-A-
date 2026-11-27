@@ -31,3 +31,6 @@ Las recetas y producción, compras y ventas, y caja y reportes comparten control
 
 ## Pruebas
 Ejecutar desde la raíz con Node.js 22: `node --test tests/unit/*.test.cjs tests/integration/*.test.cjs`. GitHub Actions ejecuta además PostgreSQL 16 con fixtures. No utilizar fixtures en producción. El orden de aplicación de SQL está en el workflow.
+
+
+**Acceso unificado:** `access.html` es el único formulario de acceso. El rol de plataforma se consulta al servidor después de autenticar, cumplir MFA y registrar la sesión. El panel de plataforma se monta en memoria solo para ese rol; no existe enlace público de administración. `admin.html` queda únicamente como redirección de compatibilidad. Las cuentas de plataforma se aprovisionan privadamente; las funciones de Supabase siguen verificando sus permisos.

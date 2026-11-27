@@ -9,8 +9,8 @@ for(const p of ['index.html','access.html','admin.html']){
 }
 const access=read('access.html'),admin=read('admin.html');
 assert.ok(access.indexOf('frontend/shared/api-client.js')<access.indexOf('frontend/auth/access-controller.js'));
-assert.ok(admin.indexOf('frontend/shared/api-client.js')<admin.indexOf('frontend/admin/admin-controller.js'));
-assert.ok(!admin.includes('access-controller.js'));
+assert.ok(access.indexOf('frontend/shared/api-client.js')<access.indexOf('frontend/admin/admin-controller.js'));assert.ok(access.indexOf('frontend/admin/billing-controller.js')<access.indexOf('frontend/admin/admin-controller.js'));assert.ok(access.indexOf('frontend/admin/admin-controller.js')<access.indexOf('frontend/auth/access-controller.js'));assert.match(admin,/http-equiv="refresh" content="0;url=access\.html"/);
+assert.ok(!admin.includes('access-controller.js'));assert.doesNotMatch(access,/href="admin\.html"/);assert.doesNotMatch(read('index.html'),/href="admin\.html"/);const template=access.match(/<template id="platform-workspace-template">([\s\S]*?)<\/template>/);assert.ok(template&&template[1].includes('id="admin-panel"'));assert.ok(!access.replace(template[0],'').includes('id="admin-panel"'));
 assert.ok(!/<script>/.test(read('index.html')));
 for(const p of ['access.js','admin.js','config.js','access.css','inventory.js','production.js','commerce.js','finance.js','workspace.js','database'])assert.ok(!fs.existsSync(path.join(root,p)),p+' should be moved');
 const workflow=read('.github/workflows/verification.yml');
