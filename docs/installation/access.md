@@ -1,9 +1,26 @@
 # Acceso y alta inicial
-El portal access.html es independiente de la demostración. frontend/config/public-config.js está vacío por defecto; sin URL y clave publicable válidas no se solicitan credenciales. No hay instancia real conectada.
-- Usar solo URL HTTPS del proyecto supabase.co y clave sb_publishable_*. No colocar claves secretas o service_role.
-- Configurar confirmación de correo obligatoria y desactivar usuarios anónimos. Configurar Site URL/redirects a access.html. Tras confirmar, iniciar sesión manualmente. No se implementa recuperación de contraseña todavía.
-- El cliente utiliza Auth REST y Data API mediante fetch. La sesión permanece solo en memoria; se pierde al recargar y requiere volver a iniciar sesión al expirar. No se guardan tokens ni contraseñas localmente. El cierre intenta revocar la sesión remota.
-- backend/database/onboarding.sql es un borrador posterior a tenant-foundation.sql. La función privada privilegiada valida el usuario confirmado, serializa altas y crea negocio, propietario y sucursal de forma atómica. Solo se permite el alta inicial a quien no pertenece a ningún negocio; altas adicionales e invitaciones se implementarán después. El wrapper público es security invoker. Mantener bakery_private fuera de los esquemas expuestos.
-- Antes de activar: generar migraciones oficiales en Supabase local, validar Auth y Data API, Database Advisors, políticas, concurrencia, configuración de correos, límites de alta, CSP y pruebas reales de navegador. No instalar los mocks en un proyecto real.
-- La pantalla real solo lista negocios/sucursales; no conecta operaciones ficticias con clientes reales.
-- Documentación: https://supabase.com/docs/guides/auth/passwords y https://supabase.com/docs/guides/api.
+
+Esta guía describe el estado actual del portal, no la demostración. Para un recorrido por los módulos consulta el [README principal](../../README.md).
+
+## Probar el portal
+
+Sirve la raíz del repositorio con `python -m http.server 8000` y abre http://localhost:8000/access.html. La demostración en index.html utiliza datos ficticios; admin.html es exclusivo de administradores de plataforma autorizados. La instancia dedicada Panaderia-SaaS ya está conectada en frontend/config/public-config.js mediante URL HTTPS y clave publicable; nunca usar claves secretas o service_role.
+
+## Configuración previa al registro real
+
+- En Supabase Auth habilitar correo y confirmación obligatoria, deshabilitar anónimos, revisar mínimo de contraseña, habilitar TOTP y configurar Site URL y redirecciones permitidas del portal legítimo.
+- Configurar plantillas de confirmación y recuperación con el código de seis dígitos (`{{ .Token }}`), usando [confirmación](email-templates/confirmation.html) y [recuperación](email-templates/recovery.html).
+- Revisar servicio SMTP y destinatarios autorizados; el correo por defecto tiene restricciones y no está validado para clientes públicos. No contratar un proveedor de pago sin autorización.
+- Verificar que bakery_private permanezca fuera de los esquemas expuestos a la Data API.
+
+## Flujo de usuario
+
+Registrar correo y contraseña (mínimo 12 caracteres en interfaz), confirmar el código y después iniciar sesión. El segundo factor es opcional en cuentas normales y obligatorio para administradores de plataforma o usuarios con un factor verificado. La recuperación solicita un código de correo, el segundo factor si corresponde y la nueva contraseña; intenta cerrar todas las sesiones. No compartir secretos.
+
+El alta inicial crea negocio, membresía de propietario y primera sucursal de forma atómica; otorga 14 días de prueba solo a un correo verificado e identidad elegibles. Los trabajadores invitados aceptan en Mi negocio usando su propio correo. No existe alta automática de superadministrador.
+
+La sesión está en memoria y no se persiste en el dispositivo. Una nueva sesión operativa sustituye la anterior. Recargar la página o expirar la sesión puede requerir autenticarse nuevamente.
+
+## Validación pendiente
+
+Antes de uso comercial: comprobar entrega real de correos, inicio y recuperación de sesión, MFA, autorización de superadministrador, permisos, concurrencia y navegación real en varios dispositivos; revisar límites, respaldos y políticas. No instalar mocks de Auth o datos de prueba en una instancia real. Consultar [instancia dedicada](supabase-instance.md) y [seguridad](../modules/auth-security.md).
