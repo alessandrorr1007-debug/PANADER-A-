@@ -8,7 +8,7 @@ Abrir `index.html` en un navegador o ejecutar `python -m http.server 8000` en la
 
 - Menú adaptable a móviles, resumen, almacén, insumos, recetas, producción, ventas, compras, reportes y configuración.
 - Dos negocios ficticios seleccionables; búsqueda en tablas y alertas de stock.
-- Paleta verde neutra provisional. Datos exclusivamente ficticios. Ventas, compras y reportes son vistas iniciales, no módulos operativos.
+- Paleta cálida de panadería (crema, blanco, marrón tostado y dorado). Datos exclusivamente ficticios. Ventas, compras y reportes son vistas iniciales, no módulos operativos.
 
 No hay autenticación, persistencia, pagos, despliegue ni aislamiento real de datos. La selección de negocio es únicamente visual.
 
@@ -29,9 +29,13 @@ Se verificó sintaxis JavaScript y siete comprobaciones de datos de ejemplo, ale
 
 ## Fase 2 — Refinamiento UI/UX
 
-- Tema claro y oscuro, con preferencia local y detección del tema del sistema.
+- Únicamente tema claro: se retiró el selector de tema, la detección del sistema y la persistencia de preferencias de tema.
 - Iconos SVG, accesos rápidos, cabecera fija y navegación por fragmentos URL.
 - Búsqueda insensible a tildes y mayúsculas, filtros por estado, contador de resultados y tablas desplazables.
 - Ajustes responsive y de navegación por teclado.
 - 19 comprobaciones de lógica y sintaxis validadas; repetir con Node.js: `node tests/ui.test.cjs`.
-- Pendiente: pruebas en navegador real, revisión visual en dispositivos y validación con usuarios. No se implementó persistencia de datos ni seguridad multi-tenant. La preferencia de tema es lo único que se guarda localmente.
+- Pendiente: pruebas en navegador real, revisión visual en dispositivos y validación con usuarios. No se implementó persistencia de datos ni seguridad multi-tenant. No se guardan preferencias de tema ni datos operativos localmente.
+
+## Identidad visual
+
+Tema claro obligatorio. Fondo crema `#FAF6EF`, superficies blancas `#FFFFFF`, texto cacao `#38271D`, botones marrón tostado `#8B451F`, acento dorado `#C58B43`. Alertas en ámbar con texto oscuro. Se comprobaron 8 pares de contraste de texto (mínimo 4.5:1) y 5 regresiones de configuración, además de las 19 pruebas existentes. Pendiente revisión visual en navegador.
