@@ -71,3 +71,7 @@ Borrador SQL de turnos, ingresos/egresos, arqueo, precios por versión y reporte
 ## Fase 6 — Modelo comercial SaaS
 
 Borrador SQL de planes provisionales, prueba, vigencia, límites, acceso de consulta tras vencimiento y administración de clientes auditada. Sin cobros ni precios definidos. Ver [suscripciones](docs/subscriptions.md). Pendiente interfaz y validación real.
+
+## Fase 7.1 — Integración de almacén e insumos
+
+El portal autenticado consume las consultas y RPC de inventario; incluye registro de insumos, mínimos, movimientos y consultas por sucursal. Sin credenciales configuradas no realiza llamadas. Ver [integración](docs/inventory-integration.md). Pruebas HTTP simuladas en CI; falta conexión y validación E2E.

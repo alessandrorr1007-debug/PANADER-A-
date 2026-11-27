@@ -1,0 +1,7 @@
+# Fase 7.1 — Integración autenticada de almacén
+El portal access.html incluye el área operativa real de inventario, separada del index.html de demostración. Requiere configuración real de Auth/Data API y los esquemas SQL previos (incluidas suscripciones). No se conectó ni desplegó un proyecto.
+- Consulta catálogo de insumos, saldos por sucursal, últimos 30 movimientos y vigencia de suscripción. Pagina catálogo/saldos por UUID y falla sin mostrar datos incompletos si supera 5000 registros en esta primera versión.
+- Registra insumos (propietario/administrador), mínimo (propietario/administrador) y entradas/salidas (también operario). Consulta conserva lectura. La UI oculta operaciones sin permiso; RLS y RPC del servidor son la autoridad.
+- UUID de movimiento se conserva en memoria para reintentos de payload idéntico en la sesión; al confirmar se descarta. Si se pierde la sesión o se recarga, comprobar historial antes de repetir una operación no confirmada. No hay cola offline ni persistencia de tokens.
+- Cambiar negocio/sucursal limpia la vista; no hay mezcla de datos ficticios. Todos los datos del servidor se renderizan con textContent.
+- Las pruebas Node verifican contratos HTTP simulados, paginación, roles, cantidades y reintentos. Faltan pruebas E2E de DOM/navegador y Supabase real, además de validación de la interfaz ante errores de red. El módulo de edición de catálogo y operaciones restantes aún está pendiente.
