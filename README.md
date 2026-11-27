@@ -288,3 +288,7 @@ Ver [tres niveles y permisos](docs/modules/employee-permissions.md) para el dise
 ### Traslados y conteo físico
 
 En el selector de sucursal, el administrador titular puede crear sucursales hasta el límite del plan. Desde Almacén, un usuario con permiso de inventario traslada insumos de la sucursal activa a otra, conservando lotes y fechas. También concilia el saldo de un lote con el conteo físico observado. Consulta los historiales. Un sobrante se registra en un nuevo lote con los mismos datos de origen; para un insumo sin lote registrado usa una entrada manual. No hay tránsito pendiente ni recepción separada. [Detalles](docs/modules/inventory-adjustments.md).
+
+### Rendimiento real y costos de producción
+
+Registra unidades planificadas, unidades realmente obtenidas y gastos declarados de mano de obra, energía y otros. El consumo se calcula con la cantidad planificada y el stock terminado con la real. El costo del lote queda registrado y se reparte entre unidades reales. Reportes incluyen margen de producción vendida, sin confundirlo con utilidad neta. [Detalles](docs/modules/production-costs.md).

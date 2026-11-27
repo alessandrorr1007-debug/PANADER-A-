@@ -1,0 +1,23 @@
+begin;
+insert into auth.users(id,email,email_confirmed_at) values('00000000-0000-4000-8000-000000000001','costed@example.test',now());
+insert into auth.sessions(id,user_id) values('30000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000001');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001',true);
+select set_config('request.jwt.claim.session_id','30000000-0000-4000-8000-000000000001',true);
+select public.register_portal_session('Costed fixture');
+do $$ declare b uuid;br uuid;i uuid;r uuid;p uuid;req uuid:=gen_random_uuid();begin
+ b:=public.create_initial_bakery('Costed bakery','Main');select id into br from public.branches where bakery_id=b;
+ insert into public.ingredients(bakery_id,name,unit,reference_cost) values(b,'Harina','kg',4) returning id into i;
+ perform public.record_stock_movement(b,br,i,gen_random_uuid(),'in',10,'Initial');
+ r:=public.create_recipe_version(b,'Pan',100,jsonb_build_array(jsonb_build_object('ingredient_id',i,'quantity',5)));
+ p:=public.complete_costed_production(b,br,r,req,100,80,10,6,4);
+ if p<>public.complete_costed_production(b,br,r,req,100,80,10,6,4) then raise exception 'Retry';end if;
+ if not exists(select 1 from public.production_batches where id=p and reference_cost=20 and planned_units=100 and output_units=80 and labor_cost+energy_cost+other_cost=20) then raise exception 'Wrong production costs';end if;
+ if (select quantity from public.stock_balances where ingredient_id=i)<>5 or (select available_units from public.finished_stock where batch_id=p)<>80 then raise exception 'Wrong yield';end if;
+ begin perform public.complete_costed_production(b,br,r,req,100,81,10,6,4);raise exception 'Changed retry';exception when unique_violation then null;end;
+ perform public.set_recipe_price(b,r,1);
+ perform public.open_cash_shift(b,br,gen_random_uuid(),0);
+ perform public.record_sale(b,br,gen_random_uuid(),'cash',jsonb_build_array(jsonb_build_object('batch_id',p,'units',40,'unit_price',1)));
+ if not exists(select 1 from public.daily_production_margin where bakery_id=b and revenue=40 and production_cost=20 and production_margin=20) then raise exception 'Wrong gross margin';end if;
+end $$;
+rollback;

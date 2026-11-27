@@ -23,14 +23,14 @@ function createFinanceController({api,run,onChange=async()=>{}}){
  const money=n=>'S/ '+centsText(n),fmt=n=>n==null?'—':money(moneyCents(n)),date=n=>n?new Date(n).toLocaleString('es-PE',{timeZone:'America/Lima'}):'—';
  const msg=t=>{$('finance-message').textContent=t;};
  const ids=['fin-shifts','fin-entries','fin-chart','fin-days','fin-shift-select'];
- const metrics=['fin-opening','fin-cash-sales','fin-digital','fin-in','fin-out','fin-expected','fin-revenue','fin-units','fin-purchases','fin-cost','fin-margin','fin-sales-count'];
+ const metrics=['fin-opening','fin-cash-sales','fin-digital','fin-in','fin-out','fin-expected','fin-revenue','fin-units','fin-purchases','fin-cost','fin-margin','fin-sales-count','fin-production-cost','fin-production-margin'];
  function clear(logout=false){scope=null;loaded=false;shifts=[];current=null;permissions={};$('finance-area').hidden=true;$('finance-content').hidden=true;$('cash-entry-form').reset();$('cash-entry-form').hidden=true;$('fin-period').value='30';ids.forEach(id=>$(id).replaceChildren());metrics.forEach(id=>$(id).textContent='—');$('fin-range').textContent='';$('fin-shift-status').textContent='';msg('');if(logout)tracker.clear();}
  function row(id,values){const tr=document.createElement('tr');for(const v of values){const td=document.createElement('td');td.textContent=String(v);tr.append(td);}$(id).append(tr);}
  async function entries(){ $('fin-entries').replaceChildren();const shift=shifts.find(s=>s.shift_id===$('fin-shift-select').value);if(!scope||!shift){row('fin-entries',['Sin turno','—','—','—']);return;}const data=await api.cashEntries(scope.bakery,shift.shift_id);if(!Array.isArray(data))throw Error('Invalid entries');for(const e of data)row('fin-entries',[date(e.created_at),e.direction==='in'?'Ingreso':'Egreso',fmt(e.amount),e.reason]);if(!data.length)row('fin-entries',['Sin movimientos','—','—','—']);}
  async function report(){
  const days=reportDays(Number($('fin-period').value)),from=days[0],to=days.at(-1),{bakery,branch}=scope;
- const [s,p]=await Promise.all([collectPages(c=>api.dailySales(bakery,branch,from,to,c),'business_date',90),collectPages(c=>api.dailyPurchases(bakery,branch,from,to,c),'business_date',90)]);
- const {rows,totals:t}=summarizeFinance(days,s,p);
+ const [s,p,full]=await Promise.all([collectPages(c=>api.dailySales(bakery,branch,from,to,c),'business_date',90),collectPages(c=>api.dailyPurchases(bakery,branch,from,to,c),'business_date',90),collectPages(c=>api.productionMargins(bakery,branch,from,to,c),'business_date',90)]);
+ const {rows,totals:t}=summarizeFinance(days,s,p);$('fin-production-cost').textContent=money(full.reduce((sum,r)=>sum+moneyCents(r.production_cost),0n));$('fin-production-margin').textContent=money(full.reduce((sum,r)=>sum+moneyCents(r.production_margin),0n));
  $('fin-range').textContent=from+' al '+to+' · hora de Perú';
  for(const [id,value] of Object.entries({'fin-revenue':money(t.revenue),'fin-units':t.units.toString(),'fin-purchases':money(t.purchases),'fin-cost':money(t.cost),'fin-margin':money(t.margin),'fin-sales-count':t.count.toString()}))$(id).textContent=value;
  $('fin-chart').replaceChildren();$('fin-days').replaceChildren();const peak=rows.reduce((m,r)=>r.revenue>m?r.revenue:m,0n);
@@ -48,7 +48,7 @@ function createFinanceController({api,run,onChange=async()=>{}}){
  $('cash-entry-form').hidden=!permissions.manager||!current;$('fin-shifts').replaceChildren();$('fin-shift-select').replaceChildren();
  for(const c of shifts){row('fin-shifts',[date(c.opened_at),c.closed_at?date(c.closed_at):'Abierta',fmt(c.expected_cash),fmt(c.counted_cash),fmt(c.difference)]);const op=document.createElement('option');op.value=c.shift_id;op.textContent=date(c.opened_at)+(c.closed_at?' · Cerrado':' · Abierto');$('fin-shift-select').append(op);}
  if(!shifts.length)row('fin-shifts',['Sin turnos','—','—','—','—']);if(shifts.some(x=>x.shift_id===prior))$('fin-shift-select').value=prior;else if(current)$('fin-shift-select').value=current.shift_id;
- await entries();await report();loaded=true;$('finance-content').hidden=false;msg(permissions.active?'':'Suscripción vencida o inactiva: consulta; cierre en el módulo comercial.');
+ if(permissions.has('cash'))await entries();if(permissions.has('reports'))await report();loaded=true;$('finance-content').hidden=false;msg(permissions.active?'':'Suscripción vencida o inactiva: consulta; cierre en el módulo comercial.');
  }catch(e){loaded=false;msg('No se pudieron cargar caja y reportes. Actualiza para volver a consultar.');if(!api.hasSession())throw e;}}
  async function open(next){scope=next;$('finance-area').hidden=false;$('finance-scope').textContent=next.label;await refresh();}
  $('finance-reload').addEventListener('click',()=>run(refresh));$('fin-period').addEventListener('change',()=>run(refresh));$('fin-shift-select').addEventListener('change',()=>run(async()=>{try{await entries();}catch(e){msg('No se pudieron consultar los movimientos.');if(!api.hasSession())throw e;}}));
