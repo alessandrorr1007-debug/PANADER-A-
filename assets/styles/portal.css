@@ -29,3 +29,5 @@ body:has(#account:not([hidden])) .workspace{max-width:none;padding:0;gap:0;min-h
 
 .permission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:6px 12px}.permission-grid .confirmation{display:flex;align-items:center;gap:8px;font-size:.9rem;margin:0}.permission-grid input[type=checkbox]{width:auto;flex:none}.permission-editor{border:1px solid var(--line);border-radius:10px;padding:12px;margin:0 0 14px}.permission-editor button{margin-top:10px}
 [data-nav][hidden]{display:none!important}
+
+#branch-create-form{display:flex;flex-wrap:wrap;align-items:end;gap:8px}#branch-create-form[hidden]{display:none}#branch-create-form input{width:min(230px,100%)}#branch-create-form small{flex-basis:100%}

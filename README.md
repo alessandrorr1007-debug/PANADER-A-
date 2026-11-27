@@ -284,3 +284,7 @@ Los documentos técnicos históricos describen el estado de sus respectivas fase
 Panadería SaaS — proyecto independiente para la gestión de panaderías. La implementación está en desarrollo y no se presenta como un servicio comercial listo para producción.
 
 Ver [tres niveles y permisos](docs/modules/employee-permissions.md) para el diseño de autorización y sus límites.
+
+### Traslados y conteo físico
+
+En el selector de sucursal, el administrador titular puede crear sucursales hasta el límite del plan. Desde Almacén, un usuario con permiso de inventario traslada insumos de la sucursal activa a otra, conservando lotes y fechas. También concilia el saldo de un lote con el conteo físico observado. Consulta los historiales. Un sobrante se registra en un nuevo lote con los mismos datos de origen; para un insumo sin lote registrado usa una entrada manual. No hay tránsito pendiente ni recepción separada. [Detalles](docs/modules/inventory-adjustments.md).
