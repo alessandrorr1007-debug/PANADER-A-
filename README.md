@@ -103,3 +103,7 @@ Consulta el [mapa de archivos](docs/architecture/repository-layout.md). Las pág
 ## Cuentas, sesiones y cobros manuales
 
 Invitaciones por correo verificado, sesión operativa única y comunicaciones de pago verificadas por administración. Ver [cuentas y cobros](docs/modules/accounts-billing.md). Instancia dedicada, configuración y pruebas reales pendientes.
+
+## Instancia dedicada de Supabase
+
+Los ocho esquemas están instalados en Panaderia-SaaS. Configuración pública conectada a su URL y clave publicable. Consultar [instancia y verificación](docs/installation/supabase-instance.md). Pendiente Auth real por navegador, aprovisionamiento de superadministrador, publicación y validación E2E. No se contrataron servicios adicionales.
