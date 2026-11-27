@@ -5,12 +5,12 @@ insert into auth.users(id,email_confirmed_at,is_anonymous) values
  ('00000000-0000-4000-8000-000000000013',now(),true);
 set local role authenticated;
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000011',true);
-do $$ declare id uuid; begin
+do $$ declare v_created_id uuid; begin
  begin perform public.create_initial_bakery('','Centro'); raise exception 'invalid accepted'; exception when invalid_parameter_value then null; end;
- id:=public.create_initial_bakery(' Aurora ',' Centro ');
- if not exists(select 1 from public.bakeries b where b.id=id and name='Aurora') then raise exception 'missing bakery'; end if;
- if not exists(select 1 from public.bakery_members m where m.bakery_id=id and role='owner' and user_id=auth.uid()) then raise exception 'missing owner'; end if;
- if not exists(select 1 from public.branches b where b.bakery_id=id and name='Centro') then raise exception 'missing branch'; end if;
+ v_created_id:=public.create_initial_bakery(' Aurora ',' Centro ');
+ if not exists(select 1 from public.bakeries b where b.id=v_created_id and name='Aurora') then raise exception 'missing bakery'; end if;
+ if not exists(select 1 from public.bakery_members m where m.bakery_id=v_created_id and role='owner' and user_id=auth.uid()) then raise exception 'missing owner'; end if;
+ if not exists(select 1 from public.branches b where b.bakery_id=v_created_id and name='Centro') then raise exception 'missing branch'; end if;
  begin perform public.create_initial_bakery('Otro','Centro'); raise exception 'duplicate accepted'; exception when unique_violation then null; end;
  if (select count(*) from public.bakeries)<>1 then raise exception 'duplicate business'; end if;
 end $$;

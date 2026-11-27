@@ -1,0 +1,51 @@
+begin;
+insert into auth.users(id) values ('00000000-0000-4000-8000-000000000001'),('00000000-0000-4000-8000-000000000002'),('00000000-0000-4000-8000-000000000003');
+insert into public.bakeries(id,name) values ('10000000-0000-4000-8000-000000000001','A'),('10000000-0000-4000-8000-000000000002','B');
+insert into public.bakery_members(bakery_id,user_id,role) values ('10000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000001','owner'),('10000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002','viewer'),('10000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000003','operator'),('10000000-0000-4000-8000-000000000002','00000000-0000-4000-8000-000000000002','owner');
+insert into public.branches(id,bakery_id,name) values ('20000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000001','Centro'),('20000000-0000-4000-8000-000000000002','10000000-0000-4000-8000-000000000002','Centro');
+insert into public.ingredients(id,bakery_id,name,unit) values ('30000000-0000-4000-8000-000000000001','10000000-0000-4000-8000-000000000001','Harina','kg'),('30000000-0000-4000-8000-000000000002','10000000-0000-4000-8000-000000000002','Azucar','kg');
+set local role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000001',true);
+do $$ declare v_id uuid; begin
+ if (select count(*) from public.ingredients)<>1 then raise exception 'ingredient isolation'; end if;
+ insert into public.ingredients(bakery_id,name,unit,reference_cost) values('10000000-0000-4000-8000-000000000001','Sal','kg',2);
+ begin insert into public.ingredients(bakery_id,name,unit) values('10000000-0000-4000-8000-000000000002','Intrusion','kg'); raise exception 'cross insert'; exception when insufficient_privilege then null; end;
+ perform public.set_stock_minimum('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001',8);
+ v_id:=public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000001','in',10,'test');
+ if v_id<>public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000001','in',10,'test') then raise exception 'retry id'; end if;
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000001','in',11,'test'); raise exception 'conflicting retry'; exception when unique_violation then null; end;
+ perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000002','out',3.125,'test');
+ if (select quantity from public.stock_balances)<>6.875 then raise exception 'balance'; end if;
+ if (select minimum from public.stock_balances)<>8 then raise exception 'minimum'; end if;
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000003','out',7,'test'); raise exception 'negative stock'; exception when check_violation then null; end;
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000003','in',0,'test'); raise exception 'zero'; exception when invalid_parameter_value then null; end;
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000003','in',0.0001,'test'); raise exception 'precision'; exception when invalid_parameter_value then null; end;
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000003','in','NaN'::numeric,'test'); raise exception 'NaN'; exception when invalid_parameter_value then null; end;
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000002','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000003','in',1,'test'); raise exception 'foreign branch'; exception when invalid_parameter_value then null; end;
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000002','40000000-0000-4000-8000-000000000003','in',1,'test'); raise exception 'foreign ingredient'; exception when invalid_parameter_value then null; end;
+ begin update public.stock_balances set quantity=100; raise exception 'direct balance write'; exception when insufficient_privilege then null; end;
+ begin delete from public.stock_movements; raise exception 'ledger delete'; exception when insufficient_privilege then null; end;
+ if (select count(*) from public.stock_movements)<>2 then raise exception 'ledger count'; end if;
+ if (select quantity from public.stock_balances)<>6.875 then raise exception 'rollback balance'; end if;
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000002',true);
+do $$ begin
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000004','in',1,'test'); raise exception 'viewer movement'; exception when insufficient_privilege then null; end;
+ begin perform public.set_stock_minimum('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001',0); raise exception 'viewer minimum'; exception when insufficient_privilege then null; end;
+ perform public.record_stock_movement('10000000-0000-4000-8000-000000000002','20000000-0000-4000-8000-000000000002','30000000-0000-4000-8000-000000000002','40000000-0000-4000-8000-000000000005','in',2,'test');
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000003',true);
+do $$ begin
+ perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000006','out',1,'test');
+ if (select quantity from public.stock_balances)<>5.875 then raise exception 'operator balance'; end if;
+ if (select count(*) from public.stock_movements)<>3 then raise exception 'other tenant visible'; end if;
+ begin perform public.set_stock_minimum('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001',0); raise exception 'operator minimum'; exception when insufficient_privilege then null; end;
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000002','20000000-0000-4000-8000-000000000002','30000000-0000-4000-8000-000000000002','40000000-0000-4000-8000-000000000007','in',1,'test'); raise exception 'other tenant write'; exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+set local role anon;
+do $$ begin
+ begin perform public.record_stock_movement('10000000-0000-4000-8000-000000000001','20000000-0000-4000-8000-000000000001','30000000-0000-4000-8000-000000000001','40000000-0000-4000-8000-000000000008','in',1,'test'); raise exception 'anon movement'; exception when insufficient_privilege then null; end;
+end $$;
+reset role;
+rollback;

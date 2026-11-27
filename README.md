@@ -51,3 +51,7 @@ Se incorpora un borrador PostgreSQL con empresas, membresías, roles, sucursales
 ## Fase 3 — Acceso y alta inicial
 
 Portal independiente con registro, inicio/cierre de sesión y selección de negocio/sucursal, preparado para Auth y Data API. Alta inicial transaccional definida en SQL. Configuración vacía por defecto, sin datos reales. Ver [acceso](docs/access.md). Las nuevas pruebas se ejecutarán en CI; falta integración real y revisión de seguridad en Supabase.
+
+## Fase 4 — Inventario e insumos
+
+Borrador SQL de catálogo, saldos por sucursal, movimientos atómicos, mínimos, RLS e idempotencia. Pruebas incorporadas a CI; se corrigió la ambigüedad de variable en el test de alta. El frontend continúa en demostración. Ver [inventario](docs/inventory.md).
