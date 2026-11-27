@@ -7,3 +7,6 @@
 
 
 **Acceso unificado:** `access.html` es el único formulario de acceso. El rol de plataforma se consulta al servidor después de autenticar, cumplir MFA y registrar la sesión. El panel de plataforma se monta en memoria solo para ese rol; no existe enlace público de administración. `admin.html` queda únicamente como redirección de compatibilidad. Las cuentas de plataforma se aprovisionan privadamente; las funciones de Supabase siguen verificando sus permisos.
+
+
+**UI de plataforma:** cuatro secciones (Resumen, Clientes, Planes y cobros, Pagos), tarjetas de indicadores y planes basadas en datos del servidor, filtros y estados vacíos diferenciados, tabla de clientes en tarjetas en móvil, formularios apilados y navegación adaptable. Se mantiene el inicio de sesión común y la autorización en servidor; no se agregan permisos ni operaciones. Los iconos son SVG locales, sin librerías ni fotografías externas.

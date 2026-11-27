@@ -22,24 +22,35 @@ function subscriptionDraft(row,plan,status,date,plans,now=Date.now()){
  if(!Number.isFinite(Date.parse(until))||(['trial','active'].includes(status)&&Date.parse(until)<=now))throw Error('Una suscripción activa o en prueba necesita vigencia futura.');
  return {plan,status,until};
 }
+const platformSections=['overview','customers','billing','payments'];
+function resolvePlatformSection(value){return platformSections.includes(value)?value:'overview';}
 function createPlatformController({api,run,isBusy,onLogout}){
- const $=id=>document.getElementById(id);let rows=[],plans=[],selected=null,authorized=false;
+ const $=id=>document.getElementById(id);let rows=[],plans=[],selected=null,authorized=false,route='overview';
  const billing=createBillingAdmin(api,run,()=>refresh());
+ const panel=$('admin-panel');
+ function showSection(value,{focus=false}={}){
+  route=resolvePlatformSection(value);
+  for(const section of panel.querySelectorAll('[data-platform-section]'))section.hidden=section.dataset.platformSection!==route;
+  for(const button of panel.querySelectorAll('[data-platform-nav]')){if(button.dataset.platformNav===route)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');}
+  if(focus){const heading=panel.querySelector('#platform-'+route+' h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});}window.scrollTo({top:0,behavior:'instant'});}
+ }
+ for(const b of panel.querySelectorAll('[data-platform-nav],[data-platform-go]'))b.addEventListener('click',()=>{if(!isBusy()&&authorized)showSection(b.dataset.platformNav||b.dataset.platformGo,{focus:true});});
  const msg=t=>{$('admin-message').textContent=t;};
  const fmt=v=>new Date(v).toLocaleString('es-PE',{timeZone:'America/Lima'});
  function clearEditor(){selected=null;$('admin-editor').hidden=true;$('admin-edit-form').reset();$('admin-edit-title').textContent='';$('admin-edit-current').textContent='';$('admin-edit-warning').textContent='';}
  function clear(){billing.clear();authorized=false;rows=[];plans=[];clearEditor();$('admin-data').hidden=true;$('admin-panel').hidden=true;$('admin-user').textContent='';for(const id of ['admin-rows','admin-plans','admin-plan-filter','admin-edit-plan'])$(id).replaceChildren();msg('');}
- async function open(email){clear();await refresh();$('admin-user').textContent=email;$('admin-panel').hidden=false;}
+ async function open(email){clear();await refresh();$('admin-user').textContent=email;$('admin-panel').hidden=false;showSection('overview');}
  function options(el,items){el.replaceChildren();for(const [value,text] of items){const o=document.createElement('option');o.value=value;o.textContent=text;el.append(o);}}
  function table(){if(!authorized)return;const filtered=filterCustomers(rows,$('admin-search').value,$('admin-state').value,$('admin-plan-filter').value),byCode=new Map(plans.map(p=>[p.code,p]));$('admin-rows').replaceChildren();
- for(const r of filtered){const p=byCode.get(r.plan_code),status=effectiveStatus(r),tr=document.createElement('tr');for(const [i,value] of [r.name,p?.name||r.plan_code,subscriptionLabels[status],fmt(r.valid_until),r.active_branches+' / '+(p?.branch_limit??'—'),r.members+' / '+(p?.member_limit??'—')].entries()){const td=document.createElement('td');td.textContent=value;if(i===2)td.dataset.state=status;tr.append(td);}const td=document.createElement('td'),b=document.createElement('button');b.type='button';b.textContent='Gestionar';b.setAttribute('aria-label','Gestionar '+r.name);b.addEventListener('click',()=>{if(authorized&&!isBusy())edit(r.bakery_id);});td.append(b);tr.append(td);$('admin-rows').append(tr);}
- if(!filtered.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=7;td.textContent='No hay clientes para este filtro.';tr.append(td);$('admin-rows').append(tr);}$('admin-count').textContent=filtered.length+' de '+rows.length+' clientes';}
+ for(const r of filtered){const p=byCode.get(r.plan_code),status=effectiveStatus(r),tr=document.createElement('tr');for(const [i,value] of [r.name,p?.name||r.plan_code,subscriptionLabels[status],fmt(r.valid_until),r.active_branches+' / '+(p?.branch_limit??'—'),r.members+' / '+(p?.member_limit??'—')].entries()){const td=document.createElement('td');td.textContent=value;td.dataset.label=['Panadería','Plan','Estado','Vigencia (Perú)','Sucursales','Miembros'][i];if(i===2)td.dataset.state=status;tr.append(td);}const td=document.createElement('td'),b=document.createElement('button');b.type='button';b.textContent='Gestionar';b.setAttribute('aria-label','Gestionar '+r.name);b.addEventListener('click',()=>{if(authorized&&!isBusy())edit(r.bakery_id);});td.className='platform-row-action';td.append(b);tr.append(td);$('admin-rows').append(tr);}
+ $('admin-empty').hidden=filtered.length>0;panel.querySelector('.platform-client-table').hidden=!filtered.length;$('admin-empty-title').textContent=rows.length?'No hay coincidencias':'Aún no hay clientes';$('admin-empty-detail').textContent=rows.length?'Prueba con otros filtros de búsqueda.':'Aquí aparecerán las panaderías que se registren en la plataforma.';$('admin-count').textContent=filtered.length+' de '+rows.length+' clientes';}
  function warning(){const r=rows.find(x=>x.bakery_id===selected),p=plans.find(x=>x.code===$('admin-edit-plan').value);if(!r||!p)return;const parts=[];if(Number(r.active_branches)>p.branch_limit||Number(r.members)>p.member_limit)parts.push('El uso actual supera el nuevo límite. No se eliminarán registros.');if(['suspended','cancelled'].includes($('admin-edit-status').value))parts.push('Se bloquearán nuevas operaciones, conservando consulta y cierre de caja.');$('admin-edit-warning').textContent=parts.join(' ');$('admin-confirm').checked=false;}
- function edit(id){clearEditor();const r=rows.find(x=>x.bakery_id===id);if(!authorized||!r)return;selected=id;$('admin-edit-title').textContent='Gestionar '+r.name;$('admin-edit-current').textContent='Estado actual: '+subscriptionLabels[effectiveStatus(r)]+' · Vigencia: '+fmt(r.valid_until);options($('admin-edit-plan'),plans.map(p=>[p.code,p.name]));$('admin-edit-plan').value=r.plan_code;$('admin-edit-status').value=r.status;$('admin-editor').hidden=false;warning();$('admin-edit-plan').focus();}
+ function edit(id){clearEditor();const r=rows.find(x=>x.bakery_id===id);if(!authorized||!r)return;selected=id;$('admin-edit-title').textContent='Gestionar '+r.name;$('admin-edit-current').textContent='Estado actual: '+subscriptionLabels[effectiveStatus(r)]+' · Vigencia: '+fmt(r.valid_until);options($('admin-edit-plan'),plans.map(p=>[p.code,p.name]));$('admin-edit-plan').value=r.plan_code;$('admin-edit-status').value=r.status;$('admin-editor').hidden=false;warning();$('admin-edit-plan').focus();$('admin-editor').scrollIntoView({block:'nearest'});}
  async function refresh(){clearEditor();authorized=false;$('admin-data').hidden=true;rows=[];plans=[];$('admin-rows').replaceChildren();const [customers,available]=await Promise.all([collectPages(c=>api.customers(c),'bakery_id'),api.plans()]);if(!Array.isArray(available)||!available.length)throw Error('Planes no disponibles');plans=available;rows=customers;const t=customerSummary(rows);for(const [id,v] of Object.entries({'adm-total':t.total,'adm-active':t.active,'adm-trial':t.trial,'adm-expired':t.expired,'adm-inactive':t.suspended+t.cancelled}))$(id).textContent=v;
- $('admin-plans').replaceChildren();for(const p of plans){const box=document.createElement('div'),title=document.createElement('strong'),desc=document.createElement('p');title.textContent=p.name;desc.textContent=p.branch_limit+' sucursales · '+p.member_limit+' miembros';box.append(title,desc);$('admin-plans').append(box);}
+ $('admin-plans').replaceChildren();for(const p of [...plans].sort((a,b)=>a.branch_limit-b.branch_limit)){const box=document.createElement('article'),title=document.createElement('h3'),desc=document.createElement('p'),cap=document.createElement('span');box.className='platform-plan';title.textContent=p.name;cap.className='platform-plan-cap';cap.textContent=p.branch_limit+' '+(p.branch_limit===1?'sucursal':'sucursales');desc.textContent='Hasta '+p.member_limit+' miembros';box.append(title,cap,desc);$('admin-plans').append(box);}
  const prior=$('admin-plan-filter').value;options($('admin-plan-filter'),[['','Todos'],...plans.map(p=>[p.code,p.name])]);if(plans.some(p=>p.code===prior))$('admin-plan-filter').value=prior;
- authorized=true;table();await billing.refresh();$('admin-data').hidden=false;msg('');}
+ await billing.refresh();authorized=true;table();$('admin-data').hidden=false;$('platform-updated').textContent='Actualizado: '+new Date().toLocaleTimeString('es-PE',{timeZone:'America/Lima',hour:'2-digit',minute:'2-digit'});showSection(route);msg('');}
+ $('admin-clear-filters').addEventListener('click',()=>{if(!authorized||isBusy())return;$('admin-search').value='';$('admin-state').value='';$('admin-plan-filter').value='';table();});
  $('admin-reload').addEventListener('click',()=>run(refresh));$('admin-logout').addEventListener('click',()=>run(onLogout));
  for(const id of ['admin-search','admin-state','admin-plan-filter'])$(id).addEventListener(id==='admin-search'?'input':'change',table);
  for(const id of ['admin-edit-plan','admin-edit-status','admin-edit-date'])$(id).addEventListener('change',warning);
@@ -49,4 +60,4 @@ function createPlatformController({api,run,isBusy,onLogout}){
  await refresh();msg('Suscripción actualizada.');});});
  return {open,clear};
 }
-if(typeof module!=='undefined')module.exports={effectiveStatus,customerSummary,filterCustomers,subscriptionDraft};
+if(typeof module!=='undefined')module.exports={effectiveStatus,customerSummary,filterCustomers,subscriptionDraft,resolvePlatformSection};
